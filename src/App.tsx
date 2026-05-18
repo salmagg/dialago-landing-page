@@ -6,6 +6,8 @@ import { getInitialLang, t, type Lang } from './i18n';
 type ThemeMode = 'light' | 'dark';
 
 const LINKEDIN_URL = 'https://www.linkedin.com/company/112662759';
+const SALMA_LINKEDIN = 'https://www.linkedin.com/in/salma-u-258530363/';
+const JEWELS_LINKEDIN = 'https://www.linkedin.com/in/jewels-z-41059b389/';
 
 function getInitialTheme(): ThemeMode {
   const stored = localStorage.getItem('dialago-theme');
@@ -43,6 +45,28 @@ function scrollToId(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
   el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function LinkedInIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M6.5 9.5V20M6.5 6.75a1.75 1.75 0 110-3.5 1.75 1.75 0 010 3.5zM10 20v-6.2c0-2.2 1.2-3.4 3-3.4 1.65 0 2.75 1.1 2.75 3.35V20H20V12.4c0-3.65-1.95-5.35-4.55-5.35-2.1 0-3.05 1.15-3.55 1.95V9.65H10c.05 1.1 0 10.35 0 10.35z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 }
 
 function SparkIcon({ className }: { className?: string }) {
@@ -438,6 +462,7 @@ export const App: React.FC = () => {
                 <h3 className="h3">{t(lang, 'how.s1Title')}</h3>
               </div>
               <p className="p">{t(lang, 'how.s1P')}</p>
+              <p className="p howCard__aiNote muted">{t(lang, 'how.s1Ai')}</p>
             </div>
 
             <div className="card">
@@ -592,19 +617,42 @@ export const App: React.FC = () => {
           </div>
 
           <div className="grid grid--2">
-            <div className="card">
+            <div className="card contactCard contactCard--salma">
               <h3 className="h3">Salma</h3>
-              <p className="p muted">{t(lang, 'contact.roleSalma')}</p>
-              <a className="btn btn--ghost" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
-                {t(lang, 'hero.linkedin')}
+              <p className="contactCard__credential muted">{t(lang, 'contact.credentialSalma')}</p>
+              <p className="contactCard__role muted">{t(lang, 'contact.roleSalma')}</p>
+              <div className="contactCard__bio">
+                <p className="p muted">{t(lang, 'contact.salmaBio')}</p>
+              </div>
+              <a
+                className="contactCard__linkedin"
+                href={SALMA_LINKEDIN}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t(lang, 'a11y.contactLinkedInSalma')}
+              >
+                <LinkedInIcon />
+                <span>{t(lang, 'hero.linkedin')}</span>
               </a>
             </div>
 
-            <div className="card card--soft">
+            <div className="card card--soft contactCard contactCard--jewels">
               <h3 className="h3">Jewels</h3>
-              <p className="p muted">{t(lang, 'contact.roleJewels')}</p>
-              <a className="btn btn--ghost" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
-                {t(lang, 'hero.linkedin')}
+              <p className="contactCard__credential muted">{t(lang, 'contact.credentialJewels')}</p>
+              <p className="contactCard__role muted">{t(lang, 'contact.roleJewels')}</p>
+              <div className="contactCard__bio">
+                <p className="p muted">{t(lang, 'contact.jewelsBio1')}</p>
+                <p className="p muted">{t(lang, 'contact.jewelsBio2')}</p>
+              </div>
+              <a
+                className="contactCard__linkedin"
+                href={JEWELS_LINKEDIN}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t(lang, 'a11y.contactLinkedInJewels')}
+              >
+                <LinkedInIcon />
+                <span>{t(lang, 'hero.linkedin')}</span>
               </a>
             </div>
           </div>
