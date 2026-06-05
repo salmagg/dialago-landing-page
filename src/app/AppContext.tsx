@@ -1,7 +1,9 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { clearAllCardProgress } from '../flashcards/useCardProgress';
+import { clearCustomDecks } from '../flashcards/mockScenarioGenerator';
 import { getInitialLang, type Lang } from '../i18n';
 import { DEFAULT_PROFILE } from './profileConstants';
-import type { AppPhase, AppProfile, AppTab } from './types';
+import type { AppPhase, AppProfile, AppTab, PracticeLaunch } from './types';
 
 type AppContextValue = {
   lang: Lang;
@@ -14,6 +16,9 @@ type AppContextValue = {
   setProfile: React.Dispatch<React.SetStateAction<AppProfile>>;
   savedPhraseIds: Record<string, boolean>;
   toggleSavedPhrase: (id: string) => void;
+  practiceLaunch: PracticeLaunch | null;
+  launchPractice: (launch: PracticeLaunch) => void;
+  clearPracticeLaunch: () => void;
   completeSetup: () => void;
   resetApp: () => void;
 };
@@ -36,6 +41,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [tab, setTab] = useState<AppTab>('home');
   const [profile, setProfile] = useState<AppProfile>(DEFAULT_PROFILE);
   const [savedPhraseIds, setSavedPhraseIds] = useState<Record<string, boolean>>({});
+  const [practiceLaunch, setPracticeLaunch] = useState<PracticeLaunch | null>(null);
 
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
@@ -60,12 +66,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
     setProfile(DEFAULT_PROFILE);
     setSavedPhraseIds({});
+    setPracticeLaunch(null);
+    clearAllCardProgress();
+    clearCustomDecks();
     setPhase('welcome');
     setTab('home');
   }, []);
 
   const toggleSavedPhrase = useCallback((id: string) => {
     setSavedPhraseIds((prev) => ({ ...prev, [id]: !prev[id] }));
+  }, []);
+
+  const launchPractice = useCallback((launch: PracticeLaunch) => {
+    setPracticeLaunch(launch);
+  }, []);
+
+  const clearPracticeLaunch = useCallback(() => {
+    setPracticeLaunch(null);
   }, []);
 
   const value = useMemo(
@@ -80,10 +97,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setProfile,
       savedPhraseIds,
       toggleSavedPhrase,
+      practiceLaunch,
+      launchPractice,
+      clearPracticeLaunch,
       completeSetup,
       resetApp,
     }),
-    [lang, setLang, phase, tab, profile, savedPhraseIds, toggleSavedPhrase, completeSetup, resetApp],
+    [lang, setLang, phase, tab, profile, savedPhraseIds, toggleSavedPhrase, practiceLaunch, launchPractice, clearPracticeLaunch, completeSetup, resetApp],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

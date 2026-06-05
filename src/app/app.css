@@ -851,6 +851,1046 @@ html.dialago-app-root body.dialago-app-body {
   gap: 10px;
 }
 
+/* Flashcard decks & flip */
+.dialago-learn {
+  gap: 16px;
+}
+
+.dialago-learn--session {
+  gap: 14px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dialago-learn__head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dialago-screen__title--sm {
+  font-size: 20px;
+}
+
+.dialago-link-btn {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.flash-deck-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flash-decks-foot {
+  margin: 12px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.flash-decks-section-label {
+  margin: 18px 0 10px;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.flash-deck-card__aiTag {
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Generate from scenario */
+.flash-gen {
+  margin-bottom: 18px;
+  padding: 16px 16px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border-soft));
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--accent) 7%, var(--bg)) 0%,
+    color-mix(in srgb, var(--surface) 20%, var(--bg)) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.flash-gen__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.flash-gen__lead {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.flash-gen__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.flash-gen__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flash-gen__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.flash-gen__submit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.flash-gen__error {
+  margin: 0;
+  font-size: 12px;
+  color: #b45309;
+}
+
+.flash-gen__progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 8px;
+  text-align: center;
+}
+
+.flash-gen__orb {
+  position: relative;
+  width: 56px;
+  height: 56px;
+}
+
+.flash-gen__orbRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  animation: flashGenSpin 1.4s linear infinite;
+}
+
+.flash-gen__orbCore {
+  position: absolute;
+  inset: 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 18%, var(--text));
+  animation: flashGenPulse 1.1s ease-in-out infinite alternate;
+}
+
+@keyframes flashGenSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes flashGenPulse {
+  from {
+    transform: scale(0.92);
+    opacity: 0.75;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.flash-gen__progressTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.flash-gen__progressStep {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  min-height: 1.2em;
+}
+
+.flash-gen__steps {
+  display: flex;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flash-gen__step {
+  width: 28px;
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 25%, transparent);
+  transition: background 220ms ease, transform 220ms ease;
+}
+
+.flash-gen__step.is-done {
+  background: color-mix(in srgb, var(--accent) 55%, var(--text));
+}
+
+.flash-gen__step.is-active {
+  transform: scaleY(1.35);
+}
+
+.flash-gen__resultHead {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flash-gen__resultBadge {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.flash-gen__resultTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.flash-gen__resultMeta {
+  margin: 0;
+  font-size: 12px;
+}
+
+.flash-gen__cards {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.flash-gen-card {
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flash-gen-card__row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.flash-gen-card__key {
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.flash-gen-card__val {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.flash-gen-card__source {
+  font-style: italic;
+}
+
+.flash-gen__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flash-scenario-badge {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border-soft));
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  align-self: flex-start;
+}
+
+.flash-scenario-badge--sm {
+  padding: 4px 8px;
+  font-size: 10px;
+  margin-bottom: 6px;
+}
+
+.flash-scenario-badge__profession {
+  color: color-mix(in srgb, var(--text) 72%, var(--muted));
+}
+
+.flash-scenario-badge__sep {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.flash-scenario-badge__scenario {
+  color: var(--text);
+}
+
+.flash-learning-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 2px;
+}
+
+.flash-learning-status__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.flash-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+.flash-status--needs {
+  color: #b45309;
+  background: color-mix(in srgb, #f59e0b 14%, var(--bg));
+  border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
+}
+
+.flash-status--improving {
+  color: #2563eb;
+  background: color-mix(in srgb, #3b82f6 12%, var(--bg));
+  border: 1px solid color-mix(in srgb, #3b82f6 30%, transparent);
+}
+
+.flash-status--mastered {
+  color: #15803d;
+  background: color-mix(in srgb, #22c55e 12%, var(--bg));
+  border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
+}
+
+.flash-source-context {
+  padding: 14px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--surface) 30%, var(--bg));
+}
+
+.flash-source-context__heading {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.flash-source-context__list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flash-source-context__row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.flash-source-context__row dt {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.flash-source-context__row dd {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.flash-source-context__quote {
+  font-style: italic;
+}
+
+.flash-practice-cta {
+  width: 100%;
+  justify-content: center;
+}
+
+.flashcard-flip.is-flipped {
+  cursor: default;
+  pointer-events: none;
+}
+
+.flash-deck-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  background: var(--bg);
+  cursor: pointer;
+  text-align: left;
+}
+
+.flash-deck-card__badge {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 650;
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg));
+  color: var(--text);
+}
+
+.flash-deck-card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flash-deck-card__title {
+  font-size: 15px;
+  font-weight: 620;
+  color: var(--text);
+}
+
+.flash-deck-card__desc,
+.flash-deck-card__scenario {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.flash-deck-card__scenario {
+  color: var(--accent);
+}
+
+.flash-deck-card__arrow {
+  color: var(--muted);
+}
+
+.flashcard-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.flashcard-stack__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.flashcard-stack__count {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.flashcard-stack__dots {
+  display: flex;
+  gap: 5px;
+}
+
+.flashcard-stack__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 35%, transparent);
+}
+
+.flashcard-stack__dot.is-on {
+  background: var(--text);
+}
+
+.flashcard-flip {
+  flex: 0 0 auto;
+  width: 100%;
+  min-height: 240px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  perspective: 1200px;
+  text-align: left;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flashcard-stack--compact .flashcard-flip {
+  min-height: 220px;
+}
+
+.flashcard-flip__inner {
+  position: relative;
+  width: 100%;
+  min-height: 240px;
+  transform-style: preserve-3d;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-transform-style: preserve-3d;
+}
+
+.flashcard-stack--compact .flashcard-flip__inner {
+  min-height: 220px;
+}
+
+.flashcard-flip.is-flipped .flashcard-flip__inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-flip__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--surface) 35%, var(--bg));
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flashcard-flip__face--back {
+  transform: rotateY(180deg);
+}
+
+.flashcard-flip__label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.flashcard-flip__term {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.flashcard-flip__def {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.flashcard-flip__ex {
+  margin-top: auto;
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.flashcard-flip__hint {
+  margin-top: auto;
+  font-size: 12px;
+}
+
+.flashcard-flip__hint--practice {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.flash-practice-cta {
+  width: 100%;
+  justify-content: center;
+  border-width: 1.5px;
+}
+
+/* Speak It */
+.flash-speak-it {
+  padding: 14px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--surface) 24%, var(--bg));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flash-speak-it__heading {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.flash-speak-it__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 4px 0;
+}
+
+.flash-speak-it__mic {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  border: 1px solid var(--border-soft);
+  background: var(--text);
+  color: var(--bg);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: box-shadow 180ms ease, transform 140ms ease;
+}
+
+.flash-speak-it__mic:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.flash-speak-it__mic.is-recording {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.flash-speak-it__mic:disabled {
+  cursor: default;
+}
+
+.flash-speak-it__wave {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  height: 28px;
+  opacity: 0.2;
+}
+
+.flash-speak-it__wave.is-active {
+  opacity: 1;
+}
+
+.flash-speak-it__wave span {
+  width: 3px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--text);
+}
+
+.flash-speak-it__wave.is-active span {
+  animation: dialagoWave 0.85s ease-in-out infinite alternate;
+}
+
+.flash-speak-it__wave.is-active span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.flash-speak-it__wave.is-active span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.flash-speak-it__wave.is-active span:nth-child(4) {
+  animation-delay: 0.36s;
+}
+
+.flash-speak-it__wave.is-active span:nth-child(5) {
+  animation-delay: 0.48s;
+}
+
+.flash-speak-it__hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.flash-speak-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.flash-speak-feedback__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.flash-speak-feedback__score {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flash-speak-feedback__scoreLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.flash-speak-feedback__scoreValue {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.flash-speak-feedback__bar {
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 20%, transparent);
+  overflow: hidden;
+}
+
+.flash-speak-feedback__barFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, #22c55e), #22c55e);
+  transition: width 480ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.flash-speak-feedback__block {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-soft);
+}
+
+.flash-speak-feedback__block--good {
+  background: color-mix(in srgb, #22c55e 8%, var(--bg));
+  border-color: color-mix(in srgb, #22c55e 25%, var(--border-soft));
+}
+
+.flash-speak-feedback__block--improve {
+  background: color-mix(in srgb, #f59e0b 8%, var(--bg));
+  border-color: color-mix(in srgb, #f59e0b 28%, var(--border-soft));
+}
+
+.flash-speak-feedback__blockLabel {
+  margin: 0 0 4px;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.flash-speak-feedback__blockText {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.flash-speak-feedback__retry {
+  align-self: flex-start;
+  font-size: 12px;
+}
+
+.flashcard-stack__save {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.flashcard-stack__save.is-saved {
+  color: var(--accent);
+}
+
+.flash-rating {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.flash-rating__btn {
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  background: var(--bg);
+  padding: 10px 8px;
+  font-size: 12px;
+  font-weight: 560;
+  cursor: pointer;
+}
+
+.flash-rating__btn--again {
+  color: #b45309;
+}
+
+.flash-rating__btn--hard {
+  color: #2563eb;
+}
+
+.flash-rating__btn--good {
+  color: #15803d;
+}
+
+.flash-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.flash-progress {
+  margin: 0;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Swipe flashcard trainer */
+.flash-swipe-trainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.flash-swipe-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flash-swipe-progress__count {
+  font-size: 14px;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+}
+
+.flash-swipe-progress__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.flash-swipe-progress__stat--known {
+  color: #15803d;
+}
+
+.flash-swipe-progress__stat--learning {
+  color: #c2410c;
+}
+
+.flash-swipe-stage {
+  position: relative;
+  min-height: 240px;
+}
+
+.flash-swipe-card-wrap {
+  position: relative;
+  z-index: 2;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+
+.flash-swipe-card-wrap:active {
+  cursor: grabbing;
+}
+
+.flash-swipe-card {
+  will-change: transform;
+}
+
+.flash-swipe-card .flashcard-flip {
+  width: 100%;
+  min-height: 240px;
+  pointer-events: none;
+}
+
+.flash-swipe-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.flash-swipe-overlay--known {
+  background: color-mix(in srgb, #22c55e 22%, transparent);
+  color: #15803d;
+  border: 2px solid color-mix(in srgb, #22c55e 45%, transparent);
+}
+
+.flash-swipe-overlay--learning {
+  background: color-mix(in srgb, #f97316 22%, transparent);
+  color: #c2410c;
+  border: 2px solid color-mix(in srgb, #f97316 45%, transparent);
+}
+
+.flash-swipe-overlay.is-active {
+  opacity: 1;
+}
+
+.flash-swipe-hint {
+  margin: 0;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.45;
+}
+
+.flashcard-flip__hint.is-pulse {
+  animation: flash-hint-pulse 520ms ease;
+}
+
+@keyframes flash-hint-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  40% {
+    opacity: 0.55;
+    transform: scale(1.04);
+  }
+}
+
+.flash-session-complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 28px 12px 8px;
+}
+
+.flash-session-complete__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #15803d;
+  background: color-mix(in srgb, #22c55e 18%, var(--bg));
+  border: 1px solid color-mix(in srgb, #22c55e 35%, var(--border-soft));
+}
+
+.flash-session-complete__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.flash-session-complete__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+}
+
+.flash-session-complete__stats div {
+  padding: 14px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--surface) 24%, var(--bg));
+}
+
+.flash-session-complete__stats dt {
+  margin: 0 0 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.flash-session-complete__stats dd {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+}
+
+.flash-session-complete__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.flash-session-complete__back {
+  margin-top: 4px;
+}
+
 /* Practice */
 .dialago-scenario-pick {
   margin: 0;
@@ -1022,7 +2062,9 @@ html.dialago-app-root body.dialago-app-body {
 
 @media (prefers-reduced-motion: reduce) {
   .dialago-wave.is-active span,
-  .dialago-analysis-orb__ring {
+  .dialago-analysis-orb__ring,
+  .flashcard-flip__inner {
     animation: none !important;
+    transition: none !important;
   }
 }

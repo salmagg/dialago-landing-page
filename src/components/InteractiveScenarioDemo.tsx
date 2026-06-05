@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { DENTAL_PHRASES_DECK } from '../flashcards';
 import { ProfileOnboardingDemo } from './ProfileOnboardingDemo';
 import { t, type Lang } from '../i18n';
 
@@ -14,11 +15,11 @@ const OPTION_KEYS = ['liveDemo.opt1', 'liveDemo.opt2', 'liveDemo.opt3'] as const
 const S4_OPTION_KEYS = ['liveDemo.s4opt1', 'liveDemo.s4opt2', 'liveDemo.s4opt3'] as const;
 const S4_FEEDBACK_KEYS = ['liveDemo.s4fb1', 'liveDemo.s4fb2', 'liveDemo.s4fb3'] as const;
 
-const FLASHCARDS = [
-  { term: 'liveDemo.fc1Term', def: 'liveDemo.fc1Def', ex: 'liveDemo.fc1Ex' },
-  { term: 'liveDemo.fc2Term', def: 'liveDemo.fc2Def', ex: 'liveDemo.fc2Ex' },
-  { term: 'liveDemo.fc3Term', def: 'liveDemo.fc3Def', ex: 'liveDemo.fc3Ex' },
-] as const;
+const FLASHCARDS = DENTAL_PHRASES_DECK.cards.slice(0, 3).map((card) => ({
+  term: card.termKey,
+  def: card.defKey,
+  ex: card.exKey,
+}));
 
 const BULLET_KEYS = ['liveDemo.bullet1', 'liveDemo.bullet2', 'liveDemo.bullet3'] as const;
 const PROFILE_BULLET_KEYS = ['profile.bullet1', 'profile.bullet2', 'profile.bullet3'] as const;

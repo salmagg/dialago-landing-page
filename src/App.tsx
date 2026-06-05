@@ -245,6 +245,10 @@ export const App: React.FC = () => {
               <span className="iconBtn__dot" aria-hidden="true" />
             </button>
 
+            <a className="btn btn--ghost" href="/app">
+              {t(lang, 'nav.tryApp')}
+            </a>
+
             <a className="btn btn--primary" href="#pricing" onClick={(e) => (e.preventDefault(), onNavClick('pricing'))}>
               {t(lang, 'hero.download')}
             </a>
@@ -293,6 +297,9 @@ export const App: React.FC = () => {
                 {item.label}
               </button>
             ))}
+            <a className="mobileNav__cta" href="/app">
+              {t(lang, 'nav.tryApp')}
+            </a>
             <a className="mobileNav__cta" href={LINKEDIN_URL} target="_blank" rel="noreferrer">
               {t(lang, 'hero.linkedin')}
             </a>

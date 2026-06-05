@@ -18,6 +18,12 @@ export type SetupPhase = 'onboarding' | 'assessment' | 'analysis' | 'profile';
 
 export type AppTab = 'home' | 'learn' | 'practice' | 'progress' | 'profile';
 
+export type PracticeLaunch = {
+  scenarioId: string;
+  deckId?: string;
+  deckTitleKey?: string;
+};
+
 export type AppPhase = 'welcome' | 'setup' | 'main';
 
 export type AssessStage = 'vocab' | 'writing' | 'speaking';

@@ -35,7 +35,7 @@ function IconMic() {
 }
 
 export function PracticeScreen() {
-  const { lang } = useApp();
+  const { lang, practiceLaunch, clearPracticeLaunch } = useApp();
   const [view, setView] = useState<View>('list');
   const [scenarioId, setScenarioId] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>('choose');
@@ -100,6 +100,20 @@ export function PracticeScreen() {
     },
     [],
   );
+
+  useEffect(() => {
+    if (!practiceLaunch?.scenarioId) return;
+    setScenarioId(practiceLaunch.scenarioId);
+    setView('session');
+    setMode('choose');
+    setSelected(null);
+    setAiMessages([]);
+    setAiInput('');
+    setTypedReply('');
+    setAiListening(false);
+    setAiThinking(false);
+    clearPracticeLaunch();
+  }, [practiceLaunch, clearPracticeLaunch]);
 
   if (view === 'list') {
     return (
