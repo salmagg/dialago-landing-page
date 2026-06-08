@@ -24,6 +24,8 @@ export type PracticeLaunch = {
   deckTitleKey?: string;
 };
 
+export type VoiceTutorLaunch = { open: true };
+
 export type AppPhase = 'welcome' | 'setup' | 'main';
 
 export type AssessStage = 'vocab' | 'writing' | 'speaking';

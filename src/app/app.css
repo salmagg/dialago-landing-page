@@ -2052,6 +2052,161 @@ html.dialago-app-root body.dialago-app-body {
   font-weight: 600;
 }
 
+/* Voice English tutor */
+.dialago-voice-tutor {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.dialago-voice-tutor__head {
+  flex: 0 0 auto;
+  padding-bottom: 8px;
+}
+
+.dialago-voice-tutor__thread {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 16px 12px;
+}
+
+.dialago-voice-tutor__empty {
+  margin: 24px 0 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.dialago-voice-tutor__error {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #b45309;
+  line-height: 1.45;
+}
+
+.dialago-voice-tutor__controls {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-top: 8px;
+  padding-bottom: calc(12px + var(--dialago-nav-h, 56px));
+}
+
+.dialago-voice-tutor__status {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted, var(--muted));
+}
+
+.dialago-voice-tutor__status.is-active {
+  color: #c2410c;
+}
+
+.dialago-voice-tutor__mic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 112px;
+  height: 112px;
+  border-radius: 999px;
+  border: 2px solid var(--border-soft);
+  background: color-mix(in srgb, var(--text) 6%, var(--bg));
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.dialago-voice-tutor__mic.is-recording {
+  transform: scale(1.04);
+  border-color: #c2410c;
+  background: color-mix(in srgb, #f97316 14%, var(--bg));
+}
+
+.dialago-voice-tutor__mic:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.dialago-voice-tutor__hint {
+  margin: 0;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.45;
+  max-width: 280px;
+}
+
+.dialago-voice-tutor__reset {
+  margin-top: 4px;
+}
+
+.dialago-voice-tutor-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 4px 10px;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 16px 14px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--text) 18%, var(--border-soft));
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--text) 5%, var(--bg)) 0%,
+    color-mix(in srgb, var(--text) 2%, var(--bg)) 100%
+  );
+  text-align: left;
+  cursor: pointer;
+}
+
+.dialago-voice-tutor-card__badge {
+  grid-row: 1 / span 2;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--text) 10%, var(--bg));
+  border: 1px solid var(--border-soft);
+}
+
+.dialago-voice-tutor-card__title {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.dialago-voice-tutor-card__desc {
+  grid-column: 2;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.dialago-voice-tutor-card__arrow {
+  grid-row: 1 / span 2;
+  grid-column: 3;
+  font-size: 18px;
+}
+
+.dialago-action-card--featured {
+  border-color: color-mix(in srgb, var(--text) 22%, var(--border-soft));
+  background: color-mix(in srgb, var(--text) 4%, var(--bg));
+}
+
 @media (min-width: 520px) {
   .dialago-app {
     border-left: 1px solid var(--border-soft);

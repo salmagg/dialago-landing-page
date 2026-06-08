@@ -1,49 +1,36 @@
-## Client Social Media Content Studio
+## DialaGO
 
-A small React + TypeScript website that helps you turn client briefs into a structured weekly social media content plan. It generates post types, angles, and detailed caption/script prompts you can paste into your AI tool of choice.
+DialaGO marketing site + interactive product demos + mobile app prototype (React, TypeScript, Vite).
 
-### Running the project
-
-1. Install dependencies (inside the `social-media-content-site` folder):
+### Local development
 
 ```bash
 npm install
-```
-
-2. Start the dev server:
-
-```bash
 npm run dev
 ```
 
-3. Open the URL printed in your terminal (usually `http://localhost:5173`).
+| Route | URL | Description |
+|-------|-----|-------------|
+| Landing | `/` | Marketing site, live demos, pricing |
+| App prototype | `/app` | Mobile-style app with Learn / Practice / Flashcards |
+| Speaking tutor | `/app` → Practice → **English speaking tutor** | Push-to-talk AI voice tutor |
 
-### How to use this with clients
+### Voice tutor (MVP)
 
-- Fill in:
-  - **Client / brand name**
-  - **Industry / niche**
-  - **Ideal audience**
-  - **Brand voice / tone**
-  - **Primary campaign goal**
-  - **Platforms** + **posts per week**
-- Click **“Create weekly content plan”**.
-- You’ll get:
-  - A short **summary** of the content strategy.
-  - A per‑platform list of **post ideas**.
-  - Well‑structured **caption / script prompts** that already encode the brand, audience, goal, and platform best practices.
+Flow: hold mic → Groq Whisper STT → Groq Llama tutor → browser TTS playback.
 
-You can:
+**Local dev:** copy `.env.example` to `.env` and set `GROQ_API_KEY`. Run `npm run dev` (Vite serves `/api/*` via local middleware).
 
-- Paste the prompts into tools like ChatGPT, Claude, etc., to generate full captions or scripts.
-- Edit the prompts directly to match each client’s preferences.
-- Export or copy the content into your own workflow (Notion, Google Docs, etc.).
+**Vercel:** add `GROQ_API_KEY` in Project → Settings → Environment Variables, then redeploy.
 
-### Swapping in a real AI backend (optional)
+### Deploy (Vercel)
 
-Right now, the `contentEngine.ts` file is pure logic that runs in the browser. If you want the site itself to generate final copy:
+1. Push this folder to GitHub.
+2. Import the repo in [Vercel](https://vercel.com).
+3. Use defaults: **Framework Preset = Vite**, **Build Command = `npm run build`**, **Output Directory = `dist`**.
+4. `vercel.json` already includes SPA rewrites so `/app` works after deploy.
 
-- Add a backend (Next.js API route, small Node/Express server, or serverless functions).
-- Replace the `generateContentPlan` implementation with a call to your AI API.
-- Keep the same input shape so the UI can stay as-is.
+### Data storage
 
+- **Built-in content** (copy, flashcard decks, scenarios, demo flows): TypeScript files under `src/`.
+- **User progress** (review status, AI-generated decks, theme, language): browser `localStorage` only — not in the repo and not synced across devices unless you add a backend later.

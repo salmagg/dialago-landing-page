@@ -3,7 +3,12 @@ import { t } from '../../i18n';
 import { useApp } from '../AppContext';
 
 export function HomeScreen() {
-  const { lang, setTab } = useApp();
+  const { lang, setTab, launchVoiceTutor } = useApp();
+
+  const openVoiceTutor = () => {
+    launchVoiceTutor();
+    setTab('practice');
+  };
 
   return (
     <div className="dialago-screen dialago-screen--pad">
@@ -14,6 +19,12 @@ export function HomeScreen() {
       </header>
 
       <div className="dialago-actions">
+        <button type="button" className="dialago-action-card dialago-action-card--featured" onClick={openVoiceTutor}>
+          <span className="dialago-action-card__title">{t(lang, 'tutor.homeCta')}</span>
+          <span className="dialago-action-card__arrow" aria-hidden="true">
+            →
+          </span>
+        </button>
         <button type="button" className="dialago-action-card" onClick={() => setTab('practice')}>
           <span className="dialago-action-card__title">{t(lang, 'app.home.startPractice')}</span>
           <span className="dialago-action-card__arrow" aria-hidden="true">

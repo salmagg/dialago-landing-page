@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { t } from '../../i18n';
+import { VoiceTutorSession } from '../../voice-tutor';
 import { useApp } from '../AppContext';
 import { PRACTICE_SCENARIOS } from '../profileConstants';
 
-type View = 'list' | 'session';
+type View = 'list' | 'session' | 'voice-tutor';
 type Mode = 'choose' | 'guided' | 'ai' | 'typed';
 
 type AiMsg = { id: string; role: 'patient' | 'user' | 'coach'; text: string };
@@ -35,7 +36,8 @@ function IconMic() {
 }
 
 export function PracticeScreen() {
-  const { lang, practiceLaunch, clearPracticeLaunch } = useApp();
+  const { lang, practiceLaunch, clearPracticeLaunch, voiceTutorLaunch, clearVoiceTutorLaunch, launchVoiceTutor } =
+    useApp();
   const [view, setView] = useState<View>('list');
   const [scenarioId, setScenarioId] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>('choose');
@@ -115,6 +117,16 @@ export function PracticeScreen() {
     clearPracticeLaunch();
   }, [practiceLaunch, clearPracticeLaunch]);
 
+  useEffect(() => {
+    if (!voiceTutorLaunch?.open) return;
+    setView('voice-tutor');
+    clearVoiceTutorLaunch();
+  }, [voiceTutorLaunch, clearVoiceTutorLaunch]);
+
+  if (view === 'voice-tutor') {
+    return <VoiceTutorSession lang={lang} onBack={() => setView('list')} />;
+  }
+
   if (view === 'list') {
     return (
       <div className="dialago-screen dialago-screen--pad">
@@ -122,6 +134,15 @@ export function PracticeScreen() {
           <h1 className="dialago-screen__title">{t(lang, 'app.practice.title')}</h1>
           <p className="dialago-screen__lead muted">{t(lang, 'app.practice.pick')}</p>
         </header>
+        <button type="button" className="dialago-voice-tutor-card" onClick={launchVoiceTutor}>
+          <span className="dialago-voice-tutor-card__badge">{t(lang, 'tutor.badge')}</span>
+          <span className="dialago-voice-tutor-card__title">{t(lang, 'tutor.cardTitle')}</span>
+          <span className="dialago-voice-tutor-card__desc muted">{t(lang, 'tutor.cardDesc')}</span>
+          <span className="dialago-voice-tutor-card__arrow" aria-hidden="true">
+            →
+          </span>
+        </button>
+
         <ul className="dialago-scenario-pick">
           {PRACTICE_SCENARIOS.map((s) => (
             <li key={s.id}>
