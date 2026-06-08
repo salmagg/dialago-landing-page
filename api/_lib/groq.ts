@@ -18,7 +18,9 @@ export async function transcribeWithGroq(audioBase64: string, mimeType: string):
   const ext = mimeType.includes('mp4') ? 'm4a' : mimeType.includes('ogg') ? 'ogg' : 'webm';
 
   const form = new FormData();
-  form.append('file', new Blob([buffer], { type: mimeType }), `audio.${ext}`);
+  const bytes = Uint8Array.from(buffer);
+  const file = new File([bytes], `audio.${ext}`, { type: mimeType });
+  form.append('file', file);
   form.append('model', 'whisper-large-v3-turbo');
   form.append('response_format', 'json');
   form.append('language', 'en');
