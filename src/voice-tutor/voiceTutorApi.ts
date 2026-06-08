@@ -7,9 +7,22 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
     body: JSON.stringify(body),
   });
 
-  const data = (await res.json()) as T & { error?: string };
+  const raw = await res.text();
+  let data: (T & { error?: string }) | null = null;
+  try {
+    data = raw ? (JSON.parse(raw) as T & { error?: string }) : null;
+  } catch {
+    const preview = raw.trim().slice(0, 120);
+    throw new Error(
+      preview || `Server returned non-JSON response (${res.status}). Check Vercel API logs.`,
+    );
+  }
+
   if (!res.ok) {
-    throw new Error(data.error ?? `Request failed (${res.status})`);
+    throw new Error(data?.error ?? `Request failed (${res.status})`);
+  }
+  if (!data) {
+    throw new Error('Empty server response');
   }
   return data;
 }
