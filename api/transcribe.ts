@@ -1,37 +1,40 @@
-import type { VercelRequest, VercelResponse } from './_lib/vercelTypes';
+import type { ServerResponse } from 'node:http';
 import { transcribeWithGroq } from './_lib/groq';
+import { type ApiRequest, readJsonBody, sendJson, sendNoContent, setCors } from './_lib/http';
 
 type TranscribeBody = {
   audio?: string;
   mimeType?: string;
 };
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export const config = {
+  maxDuration: 30,
+};
+
+export default async function handler(req: ApiRequest, res: ServerResponse) {
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    return res.status(204).end();
+    setCors(res);
+    return sendNoContent(res);
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return sendJson(res, 405, { error: 'Method not allowed' });
   }
 
   try {
-    const body = (typeof req.body === 'string' ? JSON.parse(req.body) : req.body) as TranscribeBody;
+    const body = await readJsonBody<TranscribeBody>(req);
     const audio = body.audio?.trim();
     const mimeType = body.mimeType || 'audio/webm';
 
     if (!audio) {
-      return res.status(400).json({ error: 'Missing audio payload' });
+      return sendJson(res, 400, { error: 'Missing audio payload' });
     }
 
     const text = await transcribeWithGroq(audio, mimeType);
-    return res.status(200).json({ text });
+    return sendJson(res, 200, { text });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Transcription error';
     console.error('[transcribe]', message);
-    return res.status(500).json({ error: message });
+    return sendJson(res, 500, { error: message });
   }
 }
