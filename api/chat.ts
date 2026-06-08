@@ -1,28 +1,31 @@
-import type { VercelRequest, VercelResponse } from './_lib/vercelTypes';
+import type { ServerResponse } from 'node:http';
 import { chatWithGroqTutor, type ChatMessage } from './_lib/groq';
+import { type ApiRequest, readJsonBody, sendJson, sendNoContent, setCors } from './_lib/http';
 
 type ChatBody = {
   messages?: ChatMessage[];
 };
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export const config = {
+  maxDuration: 30,
+};
+
+export default async function handler(req: ApiRequest, res: ServerResponse) {
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    return res.status(204).end();
+    setCors(res);
+    return sendNoContent(res);
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return sendJson(res, 405, { error: 'Method not allowed' });
   }
 
   try {
-    const body = (typeof req.body === 'string' ? JSON.parse(req.body) : req.body) as ChatBody;
+    const body = await readJsonBody<ChatBody>(req);
     const messages = body.messages ?? [];
 
     if (!Array.isArray(messages) || messages.length === 0) {
-      return res.status(400).json({ error: 'messages array is required' });
+      return sendJson(res, 400, { error: 'messages array is required' });
     }
 
     const sanitized: ChatMessage[] = messages
@@ -31,14 +34,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .filter((m) => m.content.length > 0);
 
     if (sanitized.length === 0) {
-      return res.status(400).json({ error: 'No valid messages' });
+      return sendJson(res, 400, { error: 'No valid messages' });
     }
 
     const reply = await chatWithGroqTutor(sanitized);
-    return res.status(200).json({ reply });
+    return sendJson(res, 200, { reply });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Chat error';
     console.error('[chat]', message);
-    return res.status(500).json({ error: message });
+    return sendJson(res, 500, { error: message });
   }
 }
