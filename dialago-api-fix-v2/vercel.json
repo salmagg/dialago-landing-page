@@ -1,0 +1,18 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/health.ts": {
+      "maxDuration": 10
+    },
+    "api/transcribe.ts": {
+      "maxDuration": 30
+    },
+    "api/chat.ts": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}
