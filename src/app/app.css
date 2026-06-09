@@ -387,9 +387,13 @@ html.dialago-app-root body.dialago-app-body {
   border-radius: 14px;
   border: 1px solid var(--border-soft);
   background: var(--bg);
+  color: var(--text);
+  font: inherit;
   font-size: 13px;
   line-height: 1.4;
   cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
   transition: transform 140ms ease, border-color 160ms ease;
 }
 
