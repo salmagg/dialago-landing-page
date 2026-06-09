@@ -1,6 +1,4 @@
-import type { ServerResponse } from 'node:http';
-
-export default function handler(_req: unknown, res: ServerResponse) {
+module.exports = function handler(_req, res) {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
   res.end(
@@ -9,4 +7,4 @@ export default function handler(_req: unknown, res: ServerResponse) {
       groqKeyConfigured: Boolean(process.env.GROQ_API_KEY),
     }),
   );
-}
+};
