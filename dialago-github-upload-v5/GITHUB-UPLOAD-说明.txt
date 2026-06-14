@@ -1,0 +1,32 @@
+GitHub 上传说明（请严格按此操作）
+================================
+
+为什么线上还是旧版？
+- 你访问的 dialago-demo.vercel.app 前端 JS 仍是旧文件（含 Maria/hospitality 预设）
+- /api/extract-intro 在 Vercel 上不存在（404）
+- 说明 GitHub 上的代码没有成功更新，或 Vercel 没有重新部署
+
+本次 v5 改动：
+- 不再依赖 /api/extract-intro（已合并进 /api/transcribe）
+- 只需更新已有 API 文件 + 全新前端 dist
+
+上传步骤：
+1. 解压 dialago-github-upload-v5.zip
+2. 打开 GitHub 仓库页面 → Add file → Upload files
+3. 把解压出来的「全部内容」拖进去（api、src、dist、package.json、vercel.json 等）
+   ⚠️ 不要只上传 zip 文件本身
+   ⚠️ 不要只上传 dist 文件夹而漏掉 api 和 src
+4. 提交 Commit（Commit changes）
+5. 打开 Vercel → 你的项目 → Deployments
+6. 等待最新部署 Status = Ready（绿色）
+7. 浏览器 Cmd+Shift+R 硬刷新
+
+验证是否成功：
+- 打开 https://dialago-demo.vercel.app/api/transcribe
+  应显示 {"error":"Method not allowed"}（不是 404）
+- Speaking 页点击麦克风录音，应显示你自己说的文字（不是固定 Maria 文案）
+
+Vercel 环境变量（必须）：
+  GROQ_API_KEY = 你的 Groq 密钥
+
+勿上传：.env 文件
