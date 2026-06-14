@@ -562,7 +562,10 @@ export const App: React.FC = () => {
             <div className="plan">
               <div className="plan__top">
                 <div className="plan__name">{t(lang, 'price.free')}</div>
-                <div className="plan__price">{t(lang, 'price.soon')}</div>
+                <div className="plan__price plan__price--paid">
+                  <span className="plan__priceAmount">{t(lang, 'price.freePrice')}</span>
+                  <span className="plan__pricePeriod">{t(lang, 'price.perMonth')}</span>
+                </div>
               </div>
               <ul className="plan__list">
                 <li>{t(lang, 'price.freeL1')}</li>
@@ -577,7 +580,10 @@ export const App: React.FC = () => {
             <div className="plan plan--featured">
               <div className="plan__top">
                 <div className="plan__name">{t(lang, 'price.plus')}</div>
-                <div className="plan__price">{t(lang, 'price.soon')}</div>
+                <div className="plan__price plan__price--paid">
+                  <span className="plan__priceAmount">{t(lang, 'price.plusPrice')}</span>
+                  <span className="plan__pricePeriod">{t(lang, 'price.perMonth')}</span>
+                </div>
               </div>
               <ul className="plan__list">
                 <li>{t(lang, 'price.plusL1')}</li>
@@ -585,14 +591,17 @@ export const App: React.FC = () => {
                 <li>{t(lang, 'price.plusL3')}</li>
               </ul>
               <a className="btn btn--primary btn--full" href="#" onClick={(e) => e.preventDefault()}>
-                {t(lang, 'hero.download')} <span className="btn__tag">{t(lang, 'price.soonTag')}</span>
+                {t(lang, 'price.getPlus')}
               </a>
             </div>
 
             <div className="plan">
               <div className="plan__top">
                 <div className="plan__name">{t(lang, 'price.pro')}</div>
-                <div className="plan__price">{t(lang, 'price.soon')}</div>
+                <div className="plan__price plan__price--paid">
+                  <span className="plan__priceAmount">{t(lang, 'price.proPrice')}</span>
+                  <span className="plan__pricePeriod">{t(lang, 'price.perMonth')}</span>
+                </div>
               </div>
               <ul className="plan__list">
                 <li>{t(lang, 'price.proL1')}</li>

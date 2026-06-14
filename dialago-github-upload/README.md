@@ -13,6 +13,15 @@ npm run dev
 |-------|-----|-------------|
 | Landing | `/` | Marketing site, live demos, pricing |
 | App prototype | `/app` | Mobile-style app with Learn / Practice / Flashcards |
+| Speaking tutor | `/app` → Practice → **English speaking tutor** | Push-to-talk AI voice tutor |
+
+### Voice tutor (MVP)
+
+Flow: hold mic → Groq Whisper STT → Groq Llama tutor → browser TTS playback.
+
+**Local dev:** copy `.env.example` to `.env` and set `GROQ_API_KEY`. Run `npm run dev` (Vite serves `/api/*` via local middleware).
+
+**Vercel:** add `GROQ_API_KEY` in Project → Settings → Environment Variables, then redeploy.
 
 ### Deploy (Vercel)
 

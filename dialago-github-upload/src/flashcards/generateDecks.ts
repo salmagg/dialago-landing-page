@@ -1,6 +1,7 @@
 import type { AppProfile } from '../app/types';
 import { SCENARIO_KEYS } from '../app/profileConstants';
 import { scenarioCategory } from '../app/profileUtils';
+import { sortDecksByProfile } from '../app/profileRecommendation';
 import { buildCardsForScenario, scenarioSlugFromKey } from './flashcardLibrary';
 import { getProfessionLabelKey, getScenarioMeta } from './scenarioRegistry';
 import type { FlashcardDeck } from './types';
@@ -9,7 +10,7 @@ export function generateDecksForProfile(profile: AppProfile): FlashcardDeck[] {
   const category = scenarioCategory(profile.profession);
   const scenarioKeys = SCENARIO_KEYS[category] ?? SCENARIO_KEYS.default;
 
-  return scenarioKeys.map((scenarioKey) => {
+  const decks = scenarioKeys.map((scenarioKey) => {
     const slug = scenarioSlugFromKey(scenarioKey);
     const meta = getScenarioMeta(slug);
     const cards = buildCardsForScenario(category, scenarioKey);
@@ -21,12 +22,14 @@ export function generateDecksForProfile(profile: AppProfile): FlashcardDeck[] {
       scenarioKey: meta.scenarioKey,
       scenarioLabelKey: meta.scenarioLabelKey,
       professionCategory: category,
-      professionLabelKey: getProfessionLabelKey(category),
-      practiceScenarioId: meta.practiceScenarioId,
+      professionLabelKey: meta.professionLabelKey ?? getProfessionLabelKey(category),
+      practiceScenarioId: slug,
       personalized: true,
       cards,
     };
   });
+
+  return sortDecksByProfile(decks, profile);
 }
 
 export function findGeneratedDeck(profile: AppProfile, deckId: string): FlashcardDeck | undefined {

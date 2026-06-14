@@ -1,12 +1,187 @@
+import type { EnglishLevel } from '../app/profileAssessment';
+import { cardsPerDeckForLevel } from '../app/profileAssessment';
 import type { Flashcard, FlashcardDeck, FlashcardLiteral } from './types';
 
 export type ScenarioGeneratorInput = {
   job: string;
   goal: string;
   scenario: string;
+  englishLevel?: EnglishLevel;
+  professionCategory?: string;
 };
 
 type CardTemplate = FlashcardLiteral;
+
+const HEALTHCARE_TEMPLATES: CardTemplate[] = [
+  {
+    term: 'Vital signs',
+    def: 'Basic measurements such as blood pressure, pulse, and temperature.',
+    ex: '"I\'ll check your vital signs before the provider sees you."',
+    context: 'You prepare a patient before a renal follow-up visit.',
+  },
+  {
+    term: 'Follow-up labs',
+    def: 'Blood tests scheduled to monitor progress after treatment.',
+    ex: '"Let\'s schedule follow-up labs in two weeks."',
+    context: 'You discuss creatinine trends with a concerned patient.',
+  },
+  {
+    term: 'Side effects',
+    def: 'Unwanted symptoms caused by medication or treatment.',
+    ex: '"Have you noticed any side effects since starting the new dose?"',
+    context: 'You review medication changes during a consultation.',
+  },
+  {
+    term: 'Referral',
+    def: 'Sending a patient to a specialist for additional care.',
+    ex: '"I\'ll put in a referral to nephrology today."',
+    context: 'You coordinate care when kidney function declines.',
+  },
+  {
+    term: 'Informed consent',
+    def: 'Explaining risks and benefits before a patient agrees to treatment.',
+    ex: '"I want to make sure you understand the procedure before we proceed."',
+    context: 'You prepare a patient for a biopsy discussion.',
+  },
+  {
+    term: 'Care plan',
+    def: 'A structured outline of treatment steps and goals.',
+    ex: '"Here\'s the care plan we\'ll adjust based on your next labs."',
+    context: 'You summarize next steps at the end of the visit.',
+  },
+];
+
+const CONSTRUCTION_TEMPLATES: CardTemplate[] = [
+  {
+    term: 'Load-bearing',
+    def: 'Supporting structural weight from floors or roof above.',
+    ex: '"We cannot cut that wall until we confirm it\'s not load-bearing."',
+    context: 'A subcontractor asks to start demolition early.',
+  },
+  {
+    term: 'Punch list',
+    def: 'Outstanding tasks that must be finished before closeout.',
+    ex: '"I\'ll add the scaffolding issue to the punch list."',
+    context: 'You track safety items during a walkthrough.',
+  },
+  {
+    term: 'Sign-off',
+    def: 'Formal approval that work meets spec or safety requirements.',
+    ex: '"We need the engineer\'s sign-off before we proceed."',
+    context: 'You halt work pending structural review.',
+  },
+  {
+    term: 'OSHA compliance',
+    def: 'Meeting federal workplace safety standards on site.',
+    ex: '"Let\'s verify OSHA compliance on fall protection first."',
+    context: 'You inspect tags before crews go aloft.',
+  },
+  {
+    term: 'Subcontractor',
+    def: 'An outside company hired to perform part of the project.',
+    ex: '"The subcontractor must follow our site safety briefing."',
+    context: 'You coordinate trades on a tight schedule.',
+  },
+];
+
+const JANITORIAL_TEMPLATES: CardTemplate[] = [
+  {
+    term: 'Contact time',
+    def: 'How long disinfectant must remain wet to kill pathogens.',
+    ex: '"The contact time for this solution is ten minutes."',
+    context: 'You respond to a spill in a clinical wing.',
+  },
+  {
+    term: 'Biohazard kit',
+    def: 'Supplies used to clean blood or infectious material safely.',
+    ex: '"I\'ll grab the biohazard kit and cordon off the area."',
+    context: 'A supervisor reports an OR suite spill.',
+  },
+  {
+    term: 'PPE',
+    def: 'Personal protective equipment worn to reduce exposure risk.',
+    ex: '"I\'ll don PPE before I start sanitizing."',
+    context: 'You follow protocol before entering a contaminated zone.',
+  },
+  {
+    term: 'Sanitization protocol',
+    def: 'Written steps for cleaning and disinfecting a space.',
+    ex: '"I\'m following the full sanitization protocol for this spill."',
+    context: 'You explain your plan to the charge nurse.',
+  },
+  {
+    term: 'Dwell time',
+    def: 'The period a chemical must sit before wiping or rinsing.',
+    ex: '"We wait until dwell time passes before running the buffer."',
+    context: 'You prevent premature mechanical cleaning.',
+  },
+];
+
+const AGRICULTURE_TEMPLATES: CardTemplate[] = [
+  {
+    term: 'Crop rotation',
+    def: 'Planting different crops in sequence to protect soil health.',
+    ex: '"We\'ll adjust crop rotation if the rain window shifts."',
+    context: 'You plan field work around weather changes.',
+  },
+  {
+    term: 'Irrigation schedule',
+    def: 'A timetable for when fields receive water.',
+    ex: '"Let\'s revise the irrigation schedule before spraying."',
+    context: 'You balance water use with pesticide timing.',
+  },
+  {
+    term: 'Pesticide drift',
+    def: 'Chemical spray carried by wind onto unintended areas.',
+    ex: '"Wind speeds are too high—we risk pesticide drift."',
+    context: 'You delay application for safety.',
+  },
+  {
+    term: 'Harvest yield',
+    def: 'The amount of crop produced in a season or field.',
+    ex: '"I\'ll check harvest yield projections before we commit."',
+    context: 'You decide whether to spray before rain.',
+  },
+  {
+    term: 'Application window',
+    def: 'A safe period when weather allows field treatments.',
+    ex: '"Today\'s application window closes at four o\'clock."',
+    context: 'You coordinate crew timing with the forecast.',
+  },
+];
+
+const BUSINESS_TEMPLATES: CardTemplate[] = [
+  {
+    term: 'Stakeholder',
+    def: 'A person with interest or authority in a project outcome.',
+    ex: '"I\'ll loop in the key stakeholder before we finalize."',
+    context: 'You align teams before a client meeting.',
+  },
+  {
+    term: 'Action items',
+    def: 'Specific tasks assigned after a meeting.',
+    ex: '"Let me recap the action items from yesterday."',
+    context: 'You clarify responsibilities on a call.',
+  },
+  {
+    term: 'Timeline',
+    def: 'The schedule of milestones and deadlines.',
+    ex: '"Can we adjust the timeline if the permit is delayed?"',
+    context: 'You negotiate project dates with a partner.',
+  },
+  {
+    term: 'Scope',
+    def: 'The defined boundaries of what work includes.',
+    ex: '"That change is outside the original scope."',
+    context: 'You manage expectations during a renovation project.',
+  },
+  {
+    term: 'Follow up',
+    def: 'To check back after an earlier conversation.',
+    ex: '"I\'ll follow up once legal reviews the contract."',
+    context: 'You close a meeting with clear next steps.',
+  },
+];
 
 const RESTAURANT_RESERVATION_TEMPLATES: CardTemplate[] = [
   {
@@ -113,7 +288,44 @@ function slugify(value: string): string {
 }
 
 function detectTemplateSet(input: ScenarioGeneratorInput): CardTemplate[] {
-  const blob = `${input.job} ${input.goal} ${input.scenario}`.toLowerCase();
+  const blob = `${input.job} ${input.goal} ${input.scenario} ${input.professionCategory ?? ''}`.toLowerCase();
+
+  if (
+    blob.includes('renal') ||
+    blob.includes('patient') ||
+    blob.includes('clinical') ||
+    blob.includes('health') ||
+    blob.includes('nurs') ||
+    blob.includes('doctor') ||
+    input.professionCategory === 'healthcare'
+  ) {
+    return HEALTHCARE_TEMPLATES;
+  }
+  if (
+    blob.includes('janitor') ||
+    blob.includes('clean') ||
+    blob.includes('sanit') ||
+    blob.includes('ppe') ||
+    blob.includes('spill')
+  ) {
+    return JANITORIAL_TEMPLATES;
+  }
+  if (blob.includes('construct') || blob.includes('jobsite') || blob.includes('osha') || blob.includes('scaffold') || blob.includes('load-bearing') || blob.includes('foreman')) {
+    return CONSTRUCTION_TEMPLATES;
+  }
+  if (input.professionCategory === 'business') {
+    return BUSINESS_TEMPLATES;
+  }
+  if (
+    blob.includes('farm') ||
+    blob.includes('crop') ||
+    blob.includes('irrigation') ||
+    blob.includes('pesticide') ||
+    blob.includes('harvest') ||
+    blob.includes('agri')
+  ) {
+    return AGRICULTURE_TEMPLATES;
+  }
   if (
     blob.includes('restaurant') ||
     blob.includes('server') ||
@@ -125,6 +337,12 @@ function detectTemplateSet(input: ScenarioGeneratorInput): CardTemplate[] {
   ) {
     return RESTAURANT_RESERVATION_TEMPLATES;
   }
+  if (input.professionCategory === 'education') {
+    return BUSINESS_TEMPLATES.map((t) => ({
+      ...t,
+      context: t.context.replace('meeting', 'parent conference'),
+    }));
+  }
   return GENERIC_TEMPLATES.map((template) => ({
     ...template,
     context: template.context.replace('a new situation', input.scenario.toLowerCase()),
@@ -132,8 +350,11 @@ function detectTemplateSet(input: ScenarioGeneratorInput): CardTemplate[] {
 }
 
 function pickCardCount(input: ScenarioGeneratorInput): number {
+  const templates = detectTemplateSet(input);
+  const levelCount = cardsPerDeckForLevel(input.englishLevel);
   const hash = `${input.job}${input.goal}${input.scenario}`.length;
-  return 5 + (hash % 6);
+  const variant = hash % 2;
+  return Math.min(templates.length, Math.max(4, levelCount + variant));
 }
 
 function buildCards(templates: CardTemplate[], count: number, deckId: string, scenarioSource: string): Flashcard[] {
@@ -162,7 +383,7 @@ export function buildGeneratedDeck(input: ScenarioGeneratorInput): FlashcardDeck
   const scenario = input.scenario.trim();
   const deckId = `gen-${slugify(scenario || goal || job)}-${Date.now()}`;
   const templates = detectTemplateSet(input);
-  const count = Math.min(pickCardCount(input), templates.length);
+  const count = pickCardCount(input);
   const scenarioSource = scenario || goal;
 
   return {
@@ -173,15 +394,23 @@ export function buildGeneratedDeck(input: ScenarioGeneratorInput): FlashcardDeck
     scenarioLabelKey: 'flash.scenarioLabel.def2',
     professionCategory: 'custom',
     professionLabelKey: 'flash.prof.general',
-    practiceScenarioId: 'customer',
+    practiceScenarioId: mapPracticeSlug(input),
     isGenerated: true,
-    personalized: false,
+    personalized: true,
     displayTitle: `${scenario} Deck`,
     displayDesc: goal,
     displayProfessionLabel: job,
     displayScenarioLabel: scenario,
     cards: buildCards(templates, count, deckId, scenarioSource),
   };
+}
+
+function mapPracticeSlug(input: ScenarioGeneratorInput): string {
+  const blob = `${input.job} ${input.scenario} ${input.professionCategory ?? ''}`.toLowerCase();
+  if (blob.includes('clean') || blob.includes('janitor') || blob.includes('sanit') || blob.includes('spill')) return 'hos2';
+  if (blob.includes('construct') || blob.includes('osha') || blob.includes('scaffold')) return 'hos3';
+  if (blob.includes('farm') || blob.includes('crop') || blob.includes('pesticide') || blob.includes('harvest')) return 'hos4';
+  return 'hos1';
 }
 
 export const GENERATION_STEP_KEYS = [

@@ -27,6 +27,7 @@ export type ScenarioMeta = {
   deckDescKey: string;
   scenarioLabelKey: string;
   practiceScenarioId: string;
+  professionLabelKey?: string;
 };
 
 export const SCENARIO_REGISTRY: Record<ScenarioSlug, ScenarioMeta> = {
@@ -100,7 +101,8 @@ export const SCENARIO_REGISTRY: Record<ScenarioSlug, ScenarioMeta> = {
     deckTitleKey: 'flash.deck.hos1.title',
     deckDescKey: 'flash.deck.hos1.desc',
     scenarioLabelKey: 'flash.scenarioLabel.hos1',
-    practiceScenarioId: 'customer',
+    practiceScenarioId: 'hos1',
+    professionLabelKey: 'profile.prof.healthcare',
   },
   hos2: {
     slug: 'hos2',
@@ -108,7 +110,8 @@ export const SCENARIO_REGISTRY: Record<ScenarioSlug, ScenarioMeta> = {
     deckTitleKey: 'flash.deck.hos2.title',
     deckDescKey: 'flash.deck.hos2.desc',
     scenarioLabelKey: 'flash.scenarioLabel.hos2',
-    practiceScenarioId: 'customer',
+    practiceScenarioId: 'hos2',
+    professionLabelKey: 'profile.prof.janitorial',
   },
   hos3: {
     slug: 'hos3',
@@ -116,7 +119,8 @@ export const SCENARIO_REGISTRY: Record<ScenarioSlug, ScenarioMeta> = {
     deckTitleKey: 'flash.deck.hos3.title',
     deckDescKey: 'flash.deck.hos3.desc',
     scenarioLabelKey: 'flash.scenarioLabel.hos3',
-    practiceScenarioId: 'customer',
+    practiceScenarioId: 'hos3',
+    professionLabelKey: 'profile.prof.construction',
   },
   hos4: {
     slug: 'hos4',
@@ -124,7 +128,8 @@ export const SCENARIO_REGISTRY: Record<ScenarioSlug, ScenarioMeta> = {
     deckTitleKey: 'flash.deck.hos4.title',
     deckDescKey: 'flash.deck.hos4.desc',
     scenarioLabelKey: 'flash.scenarioLabel.hos4',
-    practiceScenarioId: 'workplace',
+    practiceScenarioId: 'hos4',
+    professionLabelKey: 'profile.prof.agriculture',
   },
   edu1: {
     slug: 'edu1',
@@ -197,6 +202,9 @@ const PROFESSION_LABEL_KEYS: Record<string, string> = {
   business: 'profile.prof.business',
   hospitality: 'profile.prof.hospitality',
   education: 'profile.prof.education',
+  janitorial: 'profile.prof.janitorial',
+  construction: 'profile.prof.construction',
+  agriculture: 'profile.prof.agriculture',
   default: 'flash.prof.general',
 };
 

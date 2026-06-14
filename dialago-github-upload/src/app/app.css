@@ -44,6 +44,17 @@ html.dialago-app-root body.dialago-app-body {
   flex-direction: column;
 }
 
+.dialago-tab-panel {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.dialago-tab-panel.is-active {
+  display: flex;
+}
+
 .dialago-screen {
   flex: 1;
   min-height: 0;
@@ -369,6 +380,23 @@ html.dialago-app-root body.dialago-app-body {
   background: var(--text);
 }
 
+.dialago-age-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 8px;
+}
+
+.dialago-age-field__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.dialago-age-field__input {
+  max-width: 160px;
+}
+
 .dialago-assess-prompt {
   font-size: 14px;
   font-weight: 560;
@@ -387,9 +415,13 @@ html.dialago-app-root body.dialago-app-body {
   border-radius: 14px;
   border: 1px solid var(--border-soft);
   background: var(--bg);
+  color: var(--text);
+  font: inherit;
   font-size: 13px;
   line-height: 1.4;
   cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
   transition: transform 140ms ease, border-color 160ms ease;
 }
 
@@ -458,6 +490,13 @@ html.dialago-app-root body.dialago-app-body {
   justify-content: center;
   gap: 16px;
   padding: 16px 0;
+}
+
+.dialago-speaking-hint {
+  margin: -4px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .dialago-mic {
@@ -950,6 +989,12 @@ html.dialago-app-root body.dialago-app-body {
   line-height: 1.45;
 }
 
+.flash-gen__prefill {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
 .flash-gen__form {
   display: flex;
   flex-direction: column;
@@ -1301,6 +1346,25 @@ html.dialago-app-root body.dialago-app-body {
   font-weight: 650;
   background: color-mix(in srgb, var(--accent) 14%, var(--bg));
   color: var(--text);
+}
+
+.flash-deck-card__badge--recommended {
+  background: color-mix(in srgb, #eab308 18%, var(--bg));
+  color: #a16207;
+}
+
+.flash-deck-card__recTag {
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  color: #a16207;
+  background: color-mix(in srgb, #eab308 14%, var(--bg));
+  border: 1px solid color-mix(in srgb, #eab308 35%, transparent);
 }
 
 .flash-deck-card__body {
@@ -2042,6 +2106,62 @@ html.dialago-app-root body.dialago-app-body {
   margin-top: 8px;
 }
 
+.dialago-settings__edit {
+  width: 100%;
+}
+
+.dialago-edit-profile {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dialago-edit-profile__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.dialago-edit-profile__lead {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.dialago-edit-profile__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dialago-edit-profile__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.dialago-scenarios__recommend {
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.dialago-scenarios__recTag {
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a16207;
+  background: color-mix(in srgb, #eab308 14%, var(--bg));
+}
+
 .dialago-settings__summary {
   padding-bottom: calc(var(--dialago-nav-h) + 16px);
 }
@@ -2050,6 +2170,231 @@ html.dialago-app-root body.dialago-app-body {
   margin: 0 0 12px;
   font-size: 14px;
   font-weight: 600;
+}
+
+/* Voice English tutor */
+.dialago-voice-tutor {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.dialago-voice-tutor__head {
+  flex: 0 0 auto;
+  padding-bottom: 8px;
+}
+
+.dialago-voice-tutor__thread {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 16px 12px;
+}
+
+.dialago-voice-tutor__empty {
+  margin: 24px 0 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.dialago-voice-tutor__error {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #b45309;
+  line-height: 1.45;
+}
+
+.dialago-voice-tutor__controls {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-top: 8px;
+  padding-bottom: calc(12px + var(--dialago-nav-h, 56px));
+}
+
+.dialago-voice-tutor__status {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted, var(--muted));
+}
+
+.dialago-voice-tutor__status.is-active {
+  color: #c2410c;
+}
+
+.dialago-voice-tutor__mic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 112px;
+  height: 112px;
+  border-radius: 999px;
+  border: 2px solid var(--border-soft);
+  background: color-mix(in srgb, var(--text) 6%, var(--bg));
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.dialago-voice-tutor__mic.is-recording {
+  transform: scale(1.04);
+  border-color: #c2410c;
+  background: color-mix(in srgb, #f97316 14%, var(--bg));
+}
+
+.dialago-voice-tutor__mic:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.dialago-voice-tutor__hint {
+  margin: 0;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.45;
+  max-width: 280px;
+}
+
+.dialago-voice-tutor__reset {
+  margin-top: 4px;
+}
+
+.dialago-voice-tutor-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 4px 10px;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 16px 14px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--text) 18%, var(--border-soft));
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--text) 5%, var(--bg)) 0%,
+    color-mix(in srgb, var(--text) 2%, var(--bg)) 100%
+  );
+  text-align: left;
+  cursor: pointer;
+}
+
+.dialago-voice-tutor-card__badge {
+  grid-row: 1 / span 2;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--text) 10%, var(--bg));
+  border: 1px solid var(--border-soft);
+}
+
+.dialago-voice-tutor-card__title {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.dialago-voice-tutor-card__desc {
+  grid-column: 2;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.dialago-voice-tutor-card__arrow {
+  grid-row: 1 / span 2;
+  grid-column: 3;
+  font-size: 18px;
+}
+
+.dialago-action-card--featured {
+  border-color: color-mix(in srgb, var(--text) 22%, var(--border-soft));
+  background: color-mix(in srgb, var(--text) 4%, var(--bg));
+}
+
+/* Dialogue analysis (post-response) */
+.dialago-dialogue-analysis {
+  min-height: 0;
+}
+
+.dialago-dialogue-analysis__head {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.dialago-dialogue-analysis__body {
+  padding-bottom: calc(var(--dialago-nav-h) + 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dialago-analysis-block__title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.dialago-analysis-block__feedback {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--accent-ok, #2d6a4f);
+}
+
+.dialago-vocab-list,
+.dialago-grammar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dialago-vocab-card,
+.dialago-grammar-card {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  background: var(--bg);
+}
+
+.dialago-vocab-card__term,
+.dialago-grammar-card__title {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dialago-vocab-card__def,
+.dialago-grammar-card__note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.dialago-dialogue-analysis__cta {
+  margin-top: 4px;
+  width: 100%;
 }
 
 @media (min-width: 520px) {

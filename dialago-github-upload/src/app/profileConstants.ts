@@ -64,12 +64,13 @@ export const ANALYSIS_CHECK_KEYS = [
   'profile.analysis.check5',
 ] as const;
 
+/** All profiles use the same four scenario-learning decks. */
 export const SCENARIO_KEYS: Record<string, string[]> = {
-  healthcare: ['profile.scenario.hc1', 'profile.scenario.hc2', 'profile.scenario.hc3', 'profile.scenario.hc4'],
-  business: ['profile.scenario.biz1', 'profile.scenario.biz2', 'profile.scenario.biz3', 'profile.scenario.biz4'],
+  healthcare: ['profile.scenario.hos1', 'profile.scenario.hos2', 'profile.scenario.hos3', 'profile.scenario.hos4'],
+  business: ['profile.scenario.hos1', 'profile.scenario.hos2', 'profile.scenario.hos3', 'profile.scenario.hos4'],
   hospitality: ['profile.scenario.hos1', 'profile.scenario.hos2', 'profile.scenario.hos3', 'profile.scenario.hos4'],
-  education: ['profile.scenario.edu1', 'profile.scenario.edu2', 'profile.scenario.edu3', 'profile.scenario.edu4'],
-  default: ['profile.scenario.def1', 'profile.scenario.def2', 'profile.scenario.def3', 'profile.scenario.def4'],
+  education: ['profile.scenario.hos1', 'profile.scenario.hos2', 'profile.scenario.hos3', 'profile.scenario.hos4'],
+  default: ['profile.scenario.hos1', 'profile.scenario.hos2', 'profile.scenario.hos3', 'profile.scenario.hos4'],
 };
 
 export const LANG_PROGRESS_METRICS = [
@@ -88,8 +89,8 @@ export const DEFAULT_PROFILE = {
 };
 
 export const PRACTICE_SCENARIOS = [
-  { id: 'doctor', titleKey: 'app.scenario.doctor', descKey: 'app.scenario.doctorDesc' },
-  { id: 'workplace', titleKey: 'app.scenario.workplace', descKey: 'app.scenario.workplaceDesc' },
-  { id: 'customer', titleKey: 'app.scenario.customer', descKey: 'app.scenario.customerDesc' },
-  { id: 'errands', titleKey: 'app.scenario.errands', descKey: 'app.scenario.errandsDesc' },
+  { id: 'hos1', titleKey: 'practice.hos1.title', descKey: 'flash.deck.hos1.desc' },
+  { id: 'hos2', titleKey: 'practice.hos2.title', descKey: 'flash.deck.hos2.desc' },
+  { id: 'hos3', titleKey: 'practice.hos3.title', descKey: 'flash.deck.hos3.desc' },
+  { id: 'hos4', titleKey: 'practice.hos4.title', descKey: 'flash.deck.hos4.desc' },
 ] as const;

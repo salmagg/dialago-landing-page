@@ -8,21 +8,24 @@ import {
   FOCUSES,
   GOALS,
   LOCATIONS,
+  MANUAL_ID,
   NATIVE_LANGS,
   PROFESSIONS,
   VOCAB_QUESTIONS,
 } from '../profileConstants';
-import { displayField, professionDisplay } from '../profileUtils';
+import { displayField, isValidProfileAge, professionDisplay } from '../profileUtils';
+import { computeAssessment } from '../profileAssessment';
+import { useSpeakingAssessment } from '../hooks/useSpeakingAssessment';
+import type { SpeakingIntroResult } from '../speakingIntroApi';
 import type { AssessStage, SetupPhase } from '../types';
 
 const ANALYSIS_MS = 3400;
 const ANALYSIS_CHECK_MS = 520;
 const VOCAB_ADVANCE_MS = 850;
 const WRITING_CHAR_MS = 38;
-const SPEAKING_CAPTURE_MS = 2400;
 
 function AssessRail({ stage }: { stage: AssessStage }) {
-  const stages: AssessStage[] = ['vocab', 'writing', 'speaking'];
+  const stages: AssessStage[] = ['age', 'vocab', 'writing', 'speaking'];
   const idx = stages.indexOf(stage);
   return (
     <div className="dialago-assess-rail" aria-hidden="true">
@@ -49,18 +52,39 @@ function IconMic() {
 export function SetupWizard() {
   const { lang, profile, setProfile, completeSetup } = useApp();
   const [phase, setPhase] = useState<SetupPhase>('onboarding');
-  const [assessStage, setAssessStage] = useState<AssessStage>('vocab');
+  const [assessStage, setAssessStage] = useState<AssessStage>('age');
   const [vocabQIndex, setVocabQIndex] = useState(0);
   const [vocabPick, setVocabPick] = useState<number | null>(null);
   const [vocabConfirmed, setVocabConfirmed] = useState(false);
+  const [vocabCorrect, setVocabCorrect] = useState(0);
+  const [vocabAnswered, setVocabAnswered] = useState(0);
   const [writingText, setWritingText] = useState('');
   const [writingDone, setWritingDone] = useState(false);
-  const [speakingPhase, setSpeakingPhase] = useState<'prompt' | 'recording' | 'transcript' | 'feedback'>('prompt');
   const [analysisChecks, setAnalysisChecks] = useState(0);
 
   const vocabTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const writingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const speakingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const applySpeakingIntro = useCallback(
+    (result: SpeakingIntroResult) => {
+      setProfile((p) => {
+        const next = { ...p };
+        if (result.name.trim()) next.firstName = result.name.trim();
+        if (result.profession.trim()) {
+          next.profession = {
+            presetId: MANUAL_ID,
+            manual: true,
+            customText: result.profession.trim(),
+          };
+        }
+        return next;
+      });
+    },
+    [setProfile],
+  );
+
+  const speaking = useSpeakingAssessment({ onExtracted: applySpeakingIntro });
+  const { phase: speakingPhase, transcript: speakingTranscript, error: speakingError, isDemo: speakingIsDemo, isRecording: speakingRecording, micSupported: speakingMicSupported, toggleRecording: toggleSpeakingRecording, reset: resetSpeaking, busy: speakingBusy } = speaking;
 
   const writingFull = t(lang, 'profile.writing.sampleReply');
   const vocabQ = VOCAB_QUESTIONS[vocabQIndex];
@@ -74,21 +98,25 @@ export function SetupWizard() {
     displayField(lang, GOALS, profile.goal, 'profile.goal').length > 0;
 
   const resetAssessment = useCallback(() => {
-    setAssessStage('vocab');
+    setAssessStage('age');
     setVocabQIndex(0);
     setVocabPick(null);
     setVocabConfirmed(false);
+    setVocabCorrect(0);
+    setVocabAnswered(0);
     setWritingText('');
     setWritingDone(false);
-    setSpeakingPhase('prompt');
+    resetSpeaking();
     setAnalysisChecks(0);
-  }, []);
+  }, [resetSpeaking]);
 
   const onVocabSelect = (index: number) => {
     if (vocabConfirmed) return;
     const q = VOCAB_QUESTIONS[vocabQIndex];
     setVocabPick(index);
+    setVocabAnswered((n) => n + 1);
     if (index === q.correctIndex) {
+      setVocabCorrect((n) => n + 1);
       setVocabConfirmed(true);
       vocabTimer.current = setTimeout(() => {
         setVocabConfirmed(false);
@@ -100,6 +128,17 @@ export function SetupWizard() {
         }
       }, VOCAB_ADVANCE_MS);
     }
+  };
+
+  const finishAssessment = () => {
+    const assessment = computeAssessment({
+      vocabCorrect,
+      vocabAnswered,
+      writingComplete: writingDone,
+      speakingComplete: true,
+    });
+    setProfile((p) => ({ ...p, assessment }));
+    setPhase('analysis');
   };
 
   useEffect(() => {
@@ -122,20 +161,6 @@ export function SetupWizard() {
   }, [phase, assessStage, writingDone, writingFull]);
 
   useEffect(() => {
-    if (phase !== 'assessment' || assessStage !== 'speaking' || speakingPhase !== 'recording') return;
-    speakingTimer.current = setTimeout(() => setSpeakingPhase('transcript'), SPEAKING_CAPTURE_MS);
-    return () => {
-      if (speakingTimer.current) clearTimeout(speakingTimer.current);
-    };
-  }, [phase, assessStage, speakingPhase]);
-
-  useEffect(() => {
-    if (speakingPhase !== 'transcript') return;
-    const tmr = setTimeout(() => setSpeakingPhase('feedback'), 900);
-    return () => clearTimeout(tmr);
-  }, [speakingPhase]);
-
-  useEffect(() => {
     if (phase !== 'analysis') return;
     setAnalysisChecks(0);
     const timers: ReturnType<typeof setTimeout>[] = [];
@@ -150,7 +175,6 @@ export function SetupWizard() {
     () => () => {
       if (vocabTimer.current) clearTimeout(vocabTimer.current);
       if (writingTimer.current) clearTimeout(writingTimer.current);
-      if (speakingTimer.current) clearTimeout(speakingTimer.current);
     },
     [],
   );
@@ -262,6 +286,44 @@ export function SetupWizard() {
   return (
     <div className="dialago-setup dialago-setup--scroll">
       <AssessRail stage={assessStage} />
+      {assessStage === 'age' && (
+        <>
+          <h2 className="dialago-setup__title">{t(lang, 'profile.age.title')}</h2>
+          <p className="dialago-setup__lead muted">{t(lang, 'profile.age.sub')}</p>
+          <label className="dialago-age-field">
+            <span className="dialago-age-field__label">{t(lang, 'profile.age.label')}</span>
+            <input
+              className="dialago-input dialago-age-field__input"
+              type="number"
+              inputMode="numeric"
+              min={16}
+              max={99}
+              placeholder={t(lang, 'profile.age.placeholder')}
+              value={profile.age ?? ''}
+              onChange={(event) => {
+                const raw = event.target.value;
+                if (!raw) {
+                  setProfile((p) => ({ ...p, age: undefined }));
+                  return;
+                }
+                const next = Number.parseInt(raw, 10);
+                setProfile((p) => ({ ...p, age: Number.isNaN(next) ? undefined : next }));
+              }}
+            />
+          </label>
+          <footer className="dialago-setup__footer">
+            <button
+              type="button"
+              className="dialago-btn dialago-btn--primary"
+              disabled={!isValidProfileAge(profile.age)}
+              onClick={() => setAssessStage('vocab')}
+            >
+              {t(lang, 'app.setup.continue')}
+            </button>
+          </footer>
+        </>
+      )}
+
       {assessStage === 'vocab' && (
         <>
           <h2 className="dialago-setup__title">{t(lang, 'profile.vocab.title')}</h2>
@@ -328,36 +390,60 @@ export function SetupWizard() {
               <p className="dialago-bubble__meta muted">{t(lang, 'profile.bubbleCoach')}</p>
               <p>{t(lang, 'profile.speaking.aiPrompt')}</p>
             </div>
-            {(speakingPhase === 'transcript' || speakingPhase === 'feedback') && (
+            {(speakingPhase === 'transcribing' ||
+              speakingPhase === 'analyzing' ||
+              speakingPhase === 'done' ||
+              speakingPhase === 'error') &&
+            speakingTranscript ? (
               <div className="dialago-bubble dialago-bubble--out">
                 <p className="dialago-bubble__meta muted">{t(lang, 'profile.bubbleYou')}</p>
-                <p>{t(lang, 'profile.speaking.transcript')}</p>
+                <p>{speakingTranscript}</p>
               </div>
-            )}
-            {speakingPhase === 'feedback' && <p className="dialago-assess-ok">{t(lang, 'profile.speaking.feedback')}</p>}
+            ) : null}
+            {speakingPhase === 'done' ? (
+              <p className="dialago-assess-ok">{t(lang, 'profile.speaking.feedback')}</p>
+            ) : null}
+            {speakingPhase === 'transcribing' ? (
+              <p className="muted dialago-assess-typing">{t(lang, 'profile.speaking.transcribing')}</p>
+            ) : null}
+            {speakingPhase === 'analyzing' ? (
+              <p className="muted dialago-assess-typing">{t(lang, 'profile.speaking.analyzing')}</p>
+            ) : null}
+            {speakingError ? <p className="flash-gen__error">{speakingError}</p> : null}
+            {speakingIsDemo ? <p className="dialago-speaking-hint muted">{t(lang, 'profile.speaking.demoMode')}</p> : null}
           </div>
           <div className="dialago-speaking-controls">
             <button
               type="button"
-              className={`dialago-mic ${speakingPhase === 'recording' ? 'is-recording' : ''}`}
-              onClick={() => speakingPhase === 'prompt' && setSpeakingPhase('recording')}
-              disabled={speakingPhase !== 'prompt'}
+              className={`dialago-mic ${speakingRecording ? 'is-recording' : ''}`}
+              onClick={toggleSpeakingRecording}
+              disabled={!speakingMicSupported || speakingBusy || speakingPhase === 'done'}
               aria-label={t(lang, 'profile.speaking.micAria')}
             >
               <IconMic />
             </button>
-            <div className={`dialago-wave ${speakingPhase === 'recording' ? 'is-active' : ''}`} aria-hidden="true">
+            <div className={`dialago-wave ${speakingRecording ? 'is-active' : ''}`} aria-hidden="true">
               {Array.from({ length: 12 }).map((_, i) => (
                 <span key={i} style={{ animationDelay: `${i * 0.06}s` }} />
               ))}
             </div>
           </div>
+          <p className="dialago-speaking-hint muted">
+            {speakingRecording
+              ? t(lang, 'profile.speaking.tapToStop')
+              : speakingPhase === 'error'
+                ? t(lang, 'profile.speaking.tapToRetry')
+                : t(lang, 'profile.speaking.tapToStart')}
+          </p>
+          {!speakingMicSupported ? (
+            <p className="flash-gen__error">{t(lang, 'profile.speaking.micUnsupported')}</p>
+          ) : null}
           <footer className="dialago-setup__footer">
             <button
               type="button"
               className="dialago-btn dialago-btn--primary"
-              disabled={speakingPhase !== 'feedback'}
-              onClick={() => setPhase('analysis')}
+              disabled={speakingPhase !== 'done'}
+              onClick={finishAssessment}
             >
               {t(lang, 'profile.assess.finish')}
             </button>

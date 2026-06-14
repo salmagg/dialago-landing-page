@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { t, type Lang } from '../i18n';
+import type { AppProfile } from '../app/types';
+import { getGeneratorPrefill } from '../app/profileRecommendation';
+import { scenarioCategory } from '../app/profileUtils';
 import { getCardContext, getCardDef, getCardEx, getCardTerm } from './cardText';
 import { appendCustomDeck, mockGenerateScenarioDeck, type ScenarioGeneratorInput } from './mockScenarioGenerator';
 import type { FlashcardDeck } from './types';
@@ -8,19 +11,29 @@ type Phase = 'form' | 'generating' | 'result';
 
 type Props = {
   lang: Lang;
+  profile: AppProfile;
   onDeckReady: (deck: FlashcardDeck) => void;
   onStudyDeck: (deck: FlashcardDeck) => void;
 };
 
-export function GenerateScenarioCards({ lang, onDeckReady, onStudyDeck }: Props) {
+export function GenerateScenarioCards({ lang, profile, onDeckReady, onStudyDeck }: Props) {
+  const prefill = getGeneratorPrefill(profile, lang);
   const [phase, setPhase] = useState<Phase>('form');
-  const [job, setJob] = useState('');
-  const [goal, setGoal] = useState('');
-  const [scenario, setScenario] = useState('');
+  const [job, setJob] = useState(prefill.job);
+  const [goal, setGoal] = useState(prefill.goal);
+  const [scenario, setScenario] = useState(prefill.scenario);
   const [activeStep, setActiveStep] = useState(0);
   const [stepKey, setStepKey] = useState('');
   const [generatedDeck, setGeneratedDeck] = useState<FlashcardDeck | null>(null);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (phase !== 'form') return;
+    const next = getGeneratorPrefill(profile, lang);
+    setJob(next.job);
+    setGoal(next.goal);
+    setScenario(next.scenario);
+  }, [profile, lang, phase]);
 
   const canGenerate = job.trim().length > 1 && goal.trim().length > 1 && scenario.trim().length > 1;
 
@@ -35,6 +48,8 @@ export function GenerateScenarioCards({ lang, onDeckReady, onStudyDeck }: Props)
       job: job.trim(),
       goal: goal.trim(),
       scenario: scenario.trim(),
+      englishLevel: profile.assessment?.englishLevel,
+      professionCategory: scenarioCategory(profile.profession),
     };
 
     try {
@@ -67,6 +82,7 @@ export function GenerateScenarioCards({ lang, onDeckReady, onStudyDeck }: Props)
           {t(lang, 'flash.gen.title')}
         </h2>
         <p className="flash-gen__lead muted">{t(lang, 'flash.gen.lead')}</p>
+        <p className="flash-gen__prefill muted">{t(lang, 'flash.gen.profilePrefill')}</p>
       </header>
 
       {phase === 'form' ? (

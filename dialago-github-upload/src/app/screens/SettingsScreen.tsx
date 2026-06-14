@@ -1,6 +1,7 @@
 import React from 'react';
 import { t } from '../../i18n';
 import { useApp } from '../AppContext';
+import { EditProfileSection } from '../components/EditProfileSection';
 import { ProfileDashboard } from '../components/ProfileDashboard';
 
 export function SettingsScreen() {
@@ -36,6 +37,7 @@ export function SettingsScreen() {
         <button type="button" className="dialago-btn dialago-btn--ghost dialago-settings__reset" onClick={resetApp}>
           {t(lang, 'app.settings.reset')}
         </button>
+        <EditProfileSection />
       </div>
 
       <section className="dialago-settings__summary">
