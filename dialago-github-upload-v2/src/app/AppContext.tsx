@@ -1,0 +1,142 @@
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { clearAllCardProgress } from '../flashcards/useCardProgress';
+import { clearCustomDecks } from '../flashcards/mockScenarioGenerator';
+import { getInitialLang, type Lang } from '../i18n';
+import { resolvePracticeScenarioId } from './practiceContent';
+import { clearStoredProfile, readStoredProfile, writeStoredProfile } from './profilePersistence';
+import { DEFAULT_PROFILE } from './profileConstants';
+import type { AppPhase, AppProfile, AppTab, PracticeLaunch, VoiceTutorLaunch } from './types';
+
+type AppContextValue = {
+  lang: Lang;
+  setLang: (lang: Lang) => void;
+  phase: AppPhase;
+  setPhase: (phase: AppPhase) => void;
+  tab: AppTab;
+  setTab: (tab: AppTab) => void;
+  profile: AppProfile;
+  setProfile: React.Dispatch<React.SetStateAction<AppProfile>>;
+  savedPhraseIds: Record<string, boolean>;
+  toggleSavedPhrase: (id: string) => void;
+  activePracticeScenarioId: string | null;
+  launchPractice: (launch: PracticeLaunch) => void;
+  clearPracticeScenario: () => void;
+  voiceTutorLaunch: VoiceTutorLaunch | null;
+  launchVoiceTutor: () => void;
+  clearVoiceTutorLaunch: () => void;
+  completeSetup: () => void;
+  resetApp: () => void;
+};
+
+const AppContext = createContext<AppContextValue | null>(null);
+
+const STORAGE_KEY = 'dialago-app-setup-v1';
+
+function readSetupComplete(): boolean {
+  try {
+    return localStorage.getItem(STORAGE_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function AppProvider({ children }: { children: React.ReactNode }) {
+  const [lang, setLangState] = useState<Lang>(getInitialLang);
+  const [phase, setPhase] = useState<AppPhase>(() => (readSetupComplete() ? 'main' : 'welcome'));
+  const [tab, setTab] = useState<AppTab>('home');
+  const [profile, setProfile] = useState<AppProfile>(() => readStoredProfile());
+  const [savedPhraseIds, setSavedPhraseIds] = useState<Record<string, boolean>>({});
+  const [activePracticeScenarioId, setActivePracticeScenarioId] = useState<string | null>(null);
+  const [voiceTutorLaunch, setVoiceTutorLaunch] = useState<VoiceTutorLaunch | null>(null);
+
+  const setLang = useCallback((next: Lang) => {
+    setLangState(next);
+    localStorage.setItem('dialago-lang', next);
+  }, []);
+
+  useEffect(() => {
+    writeStoredProfile(profile);
+  }, [profile]);
+
+  const completeSetup = useCallback(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+    setPhase('main');
+    setTab('home');
+  }, []);
+
+  const resetApp = useCallback(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    setProfile(DEFAULT_PROFILE);
+    clearStoredProfile();
+    setSavedPhraseIds({});
+    setActivePracticeScenarioId(null);
+    setVoiceTutorLaunch(null);
+    clearAllCardProgress();
+    clearCustomDecks();
+    setPhase('welcome');
+    setTab('home');
+  }, []);
+
+  const toggleSavedPhrase = useCallback((id: string) => {
+    setSavedPhraseIds((prev) => ({ ...prev, [id]: !prev[id] }));
+  }, []);
+
+  const launchPractice = useCallback((launch: PracticeLaunch) => {
+    const resolved = resolvePracticeScenarioId(launch.scenarioId, launch.deckId, launch.deckIndex ?? null);
+    if (!resolved) return;
+    setActivePracticeScenarioId(resolved);
+    setTab('practice');
+  }, []);
+
+  const clearPracticeScenario = useCallback(() => {
+    setActivePracticeScenarioId(null);
+  }, []);
+
+  const launchVoiceTutor = useCallback(() => {
+    setVoiceTutorLaunch({ open: true });
+  }, []);
+
+  const clearVoiceTutorLaunch = useCallback(() => {
+    setVoiceTutorLaunch(null);
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      lang,
+      setLang,
+      phase,
+      setPhase,
+      tab,
+      setTab,
+      profile,
+      setProfile,
+      savedPhraseIds,
+      toggleSavedPhrase,
+      activePracticeScenarioId,
+      launchPractice,
+      clearPracticeScenario,
+      voiceTutorLaunch,
+      launchVoiceTutor,
+      clearVoiceTutorLaunch,
+      completeSetup,
+      resetApp,
+    }),
+    [lang, setLang, phase, tab, profile, savedPhraseIds, toggleSavedPhrase, activePracticeScenarioId, launchPractice, clearPracticeScenario, voiceTutorLaunch, launchVoiceTutor, clearVoiceTutorLaunch, completeSetup, resetApp],
+  );
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+}
+
+export function useApp() {
+  const ctx = useContext(AppContext);
+  if (!ctx) throw new Error('useApp must be used within AppProvider');
+  return ctx;
+}

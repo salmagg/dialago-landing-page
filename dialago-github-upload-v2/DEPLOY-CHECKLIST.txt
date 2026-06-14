@@ -1,0 +1,23 @@
+DialaGO 部署检查清单（GitHub → Vercel）
+================================
+
+当前线上问题原因（已验证）：
+- 前端仍是旧版 JS（bundle 含 "work in hospitality" 预设文案）
+- 新版 API /api/extract-intro 在 Vercel 上返回 404（未上传）
+- 因此 Speaking Check 无法做真实语音转文字
+
+上传后必须确认：
+1. GitHub 仓库根目录包含 api/extract-intro.js（不是只在子文件夹）
+2. src/app/screens/SetupWizard.tsx 已更新
+3. src/app/hooks/useSpeakingAssessment.ts 存在
+4. Vercel 项目触发新 Deployment（Deployments → 最新一条 Success）
+5. Vercel → Settings → Environment Variables：
+   GROQ_API_KEY = 你的 Groq 密钥
+6. 部署成功后浏览器硬刷新：Cmd+Shift+R
+
+如何验证已部署新版本：
+- 打开 https://dialago-demo.vercel.app/api/extract-intro
+  应返回 Method not allowed（405），而不是 NOT_FOUND
+- Speaking 页录音后应显示你真实说的内容，而不是固定 Maria/hospitality 文案
+
+勿上传：.env（含密钥）、node_modules
