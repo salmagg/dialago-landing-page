@@ -1,7 +1,9 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { clearAllCardProgress } from '../flashcards/useCardProgress';
 import { clearCustomDecks } from '../flashcards/mockScenarioGenerator';
 import { getInitialLang, type Lang } from '../i18n';
+import { resolvePracticeScenarioId } from './practiceContent';
+import { clearStoredProfile, readStoredProfile, writeStoredProfile } from './profilePersistence';
 import { DEFAULT_PROFILE } from './profileConstants';
 import type { AppPhase, AppProfile, AppTab, PracticeLaunch, VoiceTutorLaunch } from './types';
 
@@ -16,9 +18,9 @@ type AppContextValue = {
   setProfile: React.Dispatch<React.SetStateAction<AppProfile>>;
   savedPhraseIds: Record<string, boolean>;
   toggleSavedPhrase: (id: string) => void;
-  practiceLaunch: PracticeLaunch | null;
+  activePracticeScenarioId: string | null;
   launchPractice: (launch: PracticeLaunch) => void;
-  clearPracticeLaunch: () => void;
+  clearPracticeScenario: () => void;
   voiceTutorLaunch: VoiceTutorLaunch | null;
   launchVoiceTutor: () => void;
   clearVoiceTutorLaunch: () => void;
@@ -42,15 +44,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>(getInitialLang);
   const [phase, setPhase] = useState<AppPhase>(() => (readSetupComplete() ? 'main' : 'welcome'));
   const [tab, setTab] = useState<AppTab>('home');
-  const [profile, setProfile] = useState<AppProfile>(DEFAULT_PROFILE);
+  const [profile, setProfile] = useState<AppProfile>(() => readStoredProfile());
   const [savedPhraseIds, setSavedPhraseIds] = useState<Record<string, boolean>>({});
-  const [practiceLaunch, setPracticeLaunch] = useState<PracticeLaunch | null>(null);
+  const [activePracticeScenarioId, setActivePracticeScenarioId] = useState<string | null>(null);
   const [voiceTutorLaunch, setVoiceTutorLaunch] = useState<VoiceTutorLaunch | null>(null);
 
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
     localStorage.setItem('dialago-lang', next);
   }, []);
+
+  useEffect(() => {
+    writeStoredProfile(profile);
+  }, [profile]);
 
   const completeSetup = useCallback(() => {
     try {
@@ -69,8 +75,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       /* ignore */
     }
     setProfile(DEFAULT_PROFILE);
+    clearStoredProfile();
     setSavedPhraseIds({});
-    setPracticeLaunch(null);
+    setActivePracticeScenarioId(null);
     setVoiceTutorLaunch(null);
     clearAllCardProgress();
     clearCustomDecks();
@@ -83,11 +90,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const launchPractice = useCallback((launch: PracticeLaunch) => {
-    setPracticeLaunch(launch);
+    const resolved = resolvePracticeScenarioId(launch.scenarioId, launch.deckId, launch.deckIndex ?? null);
+    if (!resolved) return;
+    setActivePracticeScenarioId(resolved);
+    setTab('practice');
   }, []);
 
-  const clearPracticeLaunch = useCallback(() => {
-    setPracticeLaunch(null);
+  const clearPracticeScenario = useCallback(() => {
+    setActivePracticeScenarioId(null);
   }, []);
 
   const launchVoiceTutor = useCallback(() => {
@@ -110,16 +120,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setProfile,
       savedPhraseIds,
       toggleSavedPhrase,
-      practiceLaunch,
+      activePracticeScenarioId,
       launchPractice,
-      clearPracticeLaunch,
+      clearPracticeScenario,
       voiceTutorLaunch,
       launchVoiceTutor,
       clearVoiceTutorLaunch,
       completeSetup,
       resetApp,
     }),
-    [lang, setLang, phase, tab, profile, savedPhraseIds, toggleSavedPhrase, practiceLaunch, launchPractice, clearPracticeLaunch, voiceTutorLaunch, launchVoiceTutor, clearVoiceTutorLaunch, completeSetup, resetApp],
+    [lang, setLang, phase, tab, profile, savedPhraseIds, toggleSavedPhrase, activePracticeScenarioId, launchPractice, clearPracticeScenario, voiceTutorLaunch, launchVoiceTutor, clearVoiceTutorLaunch, completeSetup, resetApp],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

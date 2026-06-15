@@ -11,6 +11,7 @@ export {
 export { DENTAL_PHRASES_DECK, FLASHCARD_DECKS, getDeckById } from './decks';
 export { findGeneratedDeck, generateDecksForProfile } from './generateDecks';
 export { getPracticeScenarioForDeck } from './practiceBridge';
+export { resolvePracticeScenarioId } from '../app/practiceContent';
 export { getProfessionLabelKey, getScenarioMeta, getCardContextKey, SCENARIO_REGISTRY } from './scenarioRegistry';
 export {
   getCardContext,

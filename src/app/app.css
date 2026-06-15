@@ -44,6 +44,17 @@ html.dialago-app-root body.dialago-app-body {
   flex-direction: column;
 }
 
+.dialago-tab-panel {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.dialago-tab-panel.is-active {
+  display: flex;
+}
+
 .dialago-screen {
   flex: 1;
   min-height: 0;
@@ -369,6 +380,23 @@ html.dialago-app-root body.dialago-app-body {
   background: var(--text);
 }
 
+.dialago-age-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 8px;
+}
+
+.dialago-age-field__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.dialago-age-field__input {
+  max-width: 160px;
+}
+
 .dialago-assess-prompt {
   font-size: 14px;
   font-weight: 560;
@@ -462,6 +490,13 @@ html.dialago-app-root body.dialago-app-body {
   justify-content: center;
   gap: 16px;
   padding: 16px 0;
+}
+
+.dialago-speaking-hint {
+  margin: -4px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .dialago-mic {
@@ -954,6 +989,12 @@ html.dialago-app-root body.dialago-app-body {
   line-height: 1.45;
 }
 
+.flash-gen__prefill {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
 .flash-gen__form {
   display: flex;
   flex-direction: column;
@@ -1305,6 +1346,25 @@ html.dialago-app-root body.dialago-app-body {
   font-weight: 650;
   background: color-mix(in srgb, var(--accent) 14%, var(--bg));
   color: var(--text);
+}
+
+.flash-deck-card__badge--recommended {
+  background: color-mix(in srgb, #eab308 18%, var(--bg));
+  color: #a16207;
+}
+
+.flash-deck-card__recTag {
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  color: #a16207;
+  background: color-mix(in srgb, #eab308 14%, var(--bg));
+  border: 1px solid color-mix(in srgb, #eab308 35%, transparent);
 }
 
 .flash-deck-card__body {
@@ -2046,6 +2106,62 @@ html.dialago-app-root body.dialago-app-body {
   margin-top: 8px;
 }
 
+.dialago-settings__edit {
+  width: 100%;
+}
+
+.dialago-edit-profile {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dialago-edit-profile__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.dialago-edit-profile__lead {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.dialago-edit-profile__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dialago-edit-profile__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.dialago-scenarios__recommend {
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.dialago-scenarios__recTag {
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a16207;
+  background: color-mix(in srgb, #eab308 14%, var(--bg));
+}
+
 .dialago-settings__summary {
   padding-bottom: calc(var(--dialago-nav-h) + 16px);
 }
@@ -2054,6 +2170,13 @@ html.dialago-app-root body.dialago-app-body {
   margin: 0 0 12px;
   font-size: 14px;
   font-weight: 600;
+}
+
+.dialago-settings__build {
+  margin: 16px 0 0;
+  font-size: 11px;
+  text-align: center;
+  opacity: 0.7;
 }
 
 /* Voice English tutor */
@@ -2209,6 +2332,76 @@ html.dialago-app-root body.dialago-app-body {
 .dialago-action-card--featured {
   border-color: color-mix(in srgb, var(--text) 22%, var(--border-soft));
   background: color-mix(in srgb, var(--text) 4%, var(--bg));
+}
+
+/* Dialogue analysis (post-response) */
+.dialago-dialogue-analysis {
+  min-height: 0;
+}
+
+.dialago-dialogue-analysis__head {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.dialago-dialogue-analysis__body {
+  padding-bottom: calc(var(--dialago-nav-h) + 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dialago-analysis-block__title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.dialago-analysis-block__feedback {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--accent-ok, #2d6a4f);
+}
+
+.dialago-vocab-list,
+.dialago-grammar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dialago-vocab-card,
+.dialago-grammar-card {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  background: var(--bg);
+}
+
+.dialago-vocab-card__term,
+.dialago-grammar-card__title {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.dialago-vocab-card__def,
+.dialago-grammar-card__note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.dialago-dialogue-analysis__cta {
+  margin-top: 4px;
+  width: 100%;
 }
 
 @media (min-width: 520px) {

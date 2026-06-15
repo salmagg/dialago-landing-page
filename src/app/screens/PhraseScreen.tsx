@@ -16,24 +16,33 @@ import {
 } from '../../flashcards';
 import { displayField, professionDisplay } from '../profileUtils';
 import { PROFESSIONS } from '../profileConstants';
+import { ScenarioPracticeSession } from '../components/ScenarioPracticeSession';
+import {
+  practiceIdFromDeckIndex,
+  practiceIdFromDeckSlug,
+  type LearnPracticeId,
+} from '../practiceContent';
 import { useApp } from '../AppContext';
 import type { FlashcardDeck, SwipeOutcome } from '../../flashcards/types';
 
 type LearnView = 'decks' | 'session';
 
 export function PhraseScreen() {
-  const { lang, profile, savedPhraseIds, toggleSavedPhrase, launchPractice, setTab } = useApp();
+  const { lang, profile, savedPhraseIds, toggleSavedPhrase } = useApp();
   const [view, setView] = useState<LearnView>('decks');
   const [activeDeckId, setActiveDeckId] = useState<string | null>(null);
+  const [practiceScenarioId, setPracticeScenarioId] = useState<LearnPracticeId | null>(null);
   const [customDecks, setCustomDecks] = useState<FlashcardDeck[]>(() => readCustomDecks());
 
   const profileDecks = useMemo(() => generateDecksForProfile(profile), [profile]);
-  const decks = useMemo(() => [...customDecks, ...profileDecks], [customDecks, profileDecks]);
 
-  const activeDeck = useMemo(
-    () => decks.find((deck) => deck.id === activeDeckId) ?? null,
-    [decks, activeDeckId],
-  );
+  const activeDeck = useMemo(() => {
+    return (
+      profileDecks.find((deck) => deck.id === activeDeckId) ??
+      customDecks.find((deck) => deck.id === activeDeckId) ??
+      null
+    );
+  }, [profileDecks, customDecks, activeDeckId]);
 
   const professionLabel = useMemo(() => {
     if (!activeDeck) return '';
@@ -58,24 +67,30 @@ export function PhraseScreen() {
   const scenarioLabel = activeDeck ? getDeckScenarioLabel(lang, activeDeck) : '';
 
   const startDeck = (deckId: string) => {
+    setPracticeScenarioId(null);
     setActiveDeckId(deckId);
     setView('session');
   };
 
   const backToDecks = () => {
+    setPracticeScenarioId(null);
     setView('decks');
     setActiveDeckId(null);
   };
 
+  const resolveDeckPracticeId = useCallback(
+    (deck: FlashcardDeck): LearnPracticeId => {
+      const deckIndex = profileDecks.findIndex((item) => item.id === deck.id);
+      if (deckIndex >= 0) return practiceIdFromDeckIndex(deckIndex);
+      return practiceIdFromDeckSlug(deck.id.split('-').pop()) ?? getPracticeScenarioForDeck(deck, 0);
+    },
+    [profileDecks],
+  );
+
   const goToScenarioPractice = useCallback(() => {
     if (!activeDeck) return;
-    launchPractice({
-      scenarioId: getPracticeScenarioForDeck(activeDeck),
-      deckId: activeDeck.id,
-      deckTitleKey: activeDeck.titleKey,
-    });
-    setTab('practice');
-  }, [activeDeck, launchPractice, setTab]);
+    setPracticeScenarioId(resolveDeckPracticeId(activeDeck));
+  }, [activeDeck, resolveDeckPracticeId]);
 
   const handleDeckReady = useCallback((deck: FlashcardDeck) => {
     setCustomDecks(readCustomDecks());
@@ -97,6 +112,7 @@ export function PhraseScreen() {
 
         <GenerateScenarioCards
           lang={lang}
+          profile={profile}
           onDeckReady={handleDeckReady}
           onStudyDeck={(deck) => startDeck(deck.id)}
         />
@@ -106,15 +122,17 @@ export function PhraseScreen() {
         ) : null}
 
         <ul className="flash-deck-list">
-          {decks.map((deck) => {
+          {profileDecks.map((deck, index) => {
             const prof = getDeckProfessionLabel(lang, deck);
             const scenario = getDeckScenarioLabel(lang, deck);
             const title = getDeckTitle(lang, deck);
             const desc = getDeckDesc(lang, deck);
+            const deckNumber = index + 1;
+            const isRecommended = index === 0;
             return (
               <li key={deck.id}>
                 <button type="button" className="flash-deck-card" onClick={() => startDeck(deck.id)}>
-                  <span className="flash-deck-card__badge">{deck.cards.length}</span>
+                  <span className="flash-deck-card__badge">{deckNumber}</span>
                   <span className="flash-deck-card__body">
                     <span className="flash-scenario-badge flash-scenario-badge--sm">
                       <span className="flash-scenario-badge__profession">{prof}</span>
@@ -125,7 +143,39 @@ export function PhraseScreen() {
                     </span>
                     <span className="flash-deck-card__title">
                       {title}
-                      {deck.isGenerated ? <span className="flash-deck-card__aiTag">{t(lang, 'flash.gen.aiTag')}</span> : null}
+                      {isRecommended ? (
+                        <span className="flash-deck-card__recTag">{t(lang, 'flash.decks.recommended')}</span>
+                      ) : null}
+                    </span>
+                    <span className="flash-deck-card__desc muted">{desc}</span>
+                  </span>
+                  <span className="flash-deck-card__arrow" aria-hidden="true">
+                    →
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+          {customDecks.map((deck) => {
+            const prof = getDeckProfessionLabel(lang, deck);
+            const scenario = getDeckScenarioLabel(lang, deck);
+            const title = getDeckTitle(lang, deck);
+            const desc = getDeckDesc(lang, deck);
+            return (
+              <li key={deck.id}>
+                <button type="button" className="flash-deck-card" onClick={() => startDeck(deck.id)}>
+                  <span className="flash-deck-card__badge flash-deck-card__badge--ai">AI</span>
+                  <span className="flash-deck-card__body">
+                    <span className="flash-scenario-badge flash-scenario-badge--sm">
+                      <span className="flash-scenario-badge__profession">{prof}</span>
+                      <span className="flash-scenario-badge__sep" aria-hidden="true">
+                        ›
+                      </span>
+                      <span className="flash-scenario-badge__scenario">{scenario}</span>
+                    </span>
+                    <span className="flash-deck-card__title">
+                      {title}
+                      <span className="flash-deck-card__aiTag">{t(lang, 'flash.gen.aiTag')}</span>
                     </span>
                     <span className="flash-deck-card__desc muted">{desc}</span>
                   </span>
@@ -145,6 +195,16 @@ export function PhraseScreen() {
 
   if (!activeDeck) {
     return null;
+  }
+
+  if (practiceScenarioId) {
+    return (
+      <ScenarioPracticeSession
+        lang={lang}
+        scenarioId={practiceScenarioId}
+        onBack={() => setPracticeScenarioId(null)}
+      />
+    );
   }
 
   return (

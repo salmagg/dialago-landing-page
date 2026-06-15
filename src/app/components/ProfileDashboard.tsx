@@ -4,18 +4,21 @@ import { useApp } from '../AppContext';
 import {
   FOCUSES,
   GOALS,
-  LANG_PROGRESS_METRICS,
   LOCATIONS,
   NATIVE_LANGS,
   PROFESSIONS,
-  SCENARIO_KEYS,
 } from '../profileConstants';
+import {
+  deriveProgressMetrics,
+  englishLevelLabelKey,
+} from '../profileAssessment';
+import { recommendScenarios } from '../profileRecommendation';
 import {
   cityShort,
   displayField,
   formatLocation,
+  isValidProfileAge,
   professionDisplay,
-  scenarioCategory,
 } from '../profileUtils';
 
 function IconBriefcase() {
@@ -79,14 +82,55 @@ export function ProfileDashboard({ animate = true }: Props) {
   const locationFull = formatLocation(lang, profile.location);
   const cityLabel = cityShort(lang, profile.location);
 
-  const personaLine = t(lang, 'profile.personaLine')
-    .replace('{age}', '30')
+  const personaLine = (profile.firstName
+    ? t(lang, 'profile.personaLineWithName')
+    : t(lang, 'profile.personaLine')
+  )
+    .replace('{name}', profile.firstName ?? '')
+    .replace('{age}', isValidProfileAge(profile.age) ? String(profile.age) : t(lang, 'profile.ageUnknown'))
     .replace('{profession}', professionLabel);
 
-  const scenarioKeys = useMemo(
-    () => SCENARIO_KEYS[scenarioCategory(profile.profession)] ?? SCENARIO_KEYS.default,
-    [profile.profession],
+  const progressMetrics = useMemo(
+    () => deriveProgressMetrics(profile.assessment),
+    [profile.assessment],
   );
+
+  const recommendations = useMemo(() => recommendScenarios(profile), [profile]);
+
+  const scenarioKeyBySlug: Record<string, string> = {
+    hos1: 'profile.scenario.hos1',
+    hos2: 'profile.scenario.hos2',
+    hos3: 'profile.scenario.hos3',
+    hos4: 'profile.scenario.hos4',
+  };
+
+  const orderedScenarioKeys = recommendations.map((item) => scenarioKeyBySlug[item.slug] ?? 'profile.scenario.hos1');
+  const topRecommendation = recommendations[0];
+
+  const englishLevelValue = profile.assessment
+    ? t(lang, englishLevelLabelKey(profile.assessment.englishLevel))
+    : t(lang, 'profile.assessPending');
+
+  const speakingPct = progressMetrics[0]?.pct ?? 72;
+  const vocabAccuracy =
+    profile.assessment && profile.assessment.vocabAnswered > 0
+      ? profile.assessment.vocabCorrect / profile.assessment.vocabAnswered
+      : null;
+
+  const writingValue = profile.assessment?.writingComplete
+    ? t(lang, 'profile.valWritingStrong')
+    : profile.assessment
+      ? t(lang, 'profile.valWritingDeveloping')
+      : t(lang, 'profile.valWritingClarity');
+
+  const vocabValue =
+    vocabAccuracy === null
+      ? t(lang, 'profile.valVocabRange')
+      : vocabAccuracy >= 0.85
+        ? t(lang, 'profile.valVocabWorkplace')
+        : vocabAccuracy >= 0.55
+          ? t(lang, 'profile.valVocabGrowing')
+          : t(lang, 'profile.valVocabFoundational');
 
   useEffect(() => {
     if (!animate) return;
@@ -110,19 +154,19 @@ export function ProfileDashboard({ animate = true }: Props) {
       <div className="dialago-profile__metrics">
         <div className="dialago-metric">
           <span className="dialago-metric__label muted">{t(lang, 'profile.rowEnglishLevel')}</span>
-          <span className="dialago-metric__value">{t(lang, 'profile.valEnglishLevel')}</span>
+          <span className="dialago-metric__value">{englishLevelValue}</span>
         </div>
         <div className="dialago-metric">
           <span className="dialago-metric__label muted">{t(lang, 'profile.rowSpeakingConf')}</span>
-          <span className="dialago-metric__value">{t(lang, 'profile.valSpeakingConf')}</span>
+          <span className="dialago-metric__value">{`${speakingPct}%`}</span>
         </div>
         <div className="dialago-metric">
           <span className="dialago-metric__label muted">{t(lang, 'profile.rowWritingClarity')}</span>
-          <span className="dialago-metric__value">{t(lang, 'profile.valWritingClarity')}</span>
+          <span className="dialago-metric__value">{writingValue}</span>
         </div>
         <div className="dialago-metric">
           <span className="dialago-metric__label muted">{t(lang, 'profile.rowVocabRange')}</span>
-          <span className="dialago-metric__value">{t(lang, 'profile.valVocabRange')}</span>
+          <span className="dialago-metric__value">{vocabValue}</span>
         </div>
       </div>
 
@@ -160,7 +204,7 @@ export function ProfileDashboard({ animate = true }: Props) {
       <div className="dialago-progress-block">
         <p className="dialago-progress-block__title">{t(lang, 'profile.langProgressTitle')}</p>
         <div className={`dialago-progress-block__bars ${progressVisible ? 'is-animated' : ''}`}>
-          {LANG_PROGRESS_METRICS.map((m) => (
+          {progressMetrics.map((m) => (
             <div key={m.key} className="dialago-progress-bar">
               <div className="dialago-progress-bar__head">
                 <span>{t(lang, m.key)}</span>
@@ -183,13 +227,21 @@ export function ProfileDashboard({ animate = true }: Props) {
           <p className="dialago-scenarios__title">{t(lang, 'profile.scenarioRecordsTitle')}</p>
           <p className="dialago-scenarios__badge muted">{t(lang, 'profile.scenarioRecordsBadge')}</p>
         </div>
+        {topRecommendation ? (
+          <p className="dialago-scenarios__recommend muted">{t(lang, topRecommendation.reasonKey)}</p>
+        ) : null}
         <ul className="dialago-scenarios__list">
-          {scenarioKeys.map((key) => (
+          {orderedScenarioKeys.map((key, index) => (
             <li key={key} className="dialago-scenarios__item">
               <span className="dialago-scenarios__check" aria-hidden="true">
-                ✓
+                {index === 0 ? '★' : '✓'}
               </span>
-              <span>{t(lang, key)}</span>
+              <span>
+                {t(lang, key)}
+                {index === 0 ? (
+                  <span className="dialago-scenarios__recTag">{t(lang, 'flash.decks.recommended')}</span>
+                ) : null}
+              </span>
             </li>
           ))}
         </ul>

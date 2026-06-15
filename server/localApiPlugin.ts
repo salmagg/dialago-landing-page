@@ -1,5 +1,23 @@
 import type { Plugin } from 'vite';
-import { chatWithGroqTutor, type ChatMessage, transcribeWithGroq } from '../api/_lib/groq';
+import { loadEnv } from 'vite';
+import { chatWithGroqTutor, extractIntroWithGroq, transcribeWithGroq, useDemoMode } from '../api/_lib/groq.js';
+
+type ChatMessage = { role: 'user' | 'assistant'; content: string };
+
+function applyLocalEnv(mode: string, root: string) {
+  const env = loadEnv(mode, root, '');
+  // Always prefer `.env` for Groq so stale shell exports or old server env don't win.
+  const groqFromFile = env.GROQ_API_KEY?.trim();
+  if (groqFromFile) {
+    process.env.GROQ_API_KEY = groqFromFile;
+  }
+  for (const [key, value] of Object.entries(env)) {
+    if (key === 'GROQ_API_KEY') continue;
+    if (process.env[key] === undefined) {
+      process.env[key] = value;
+    }
+  }
+}
 
 async function readJsonBody(req: import('http').IncomingMessage): Promise<unknown> {
   const chunks: Buffer[] = [];
@@ -14,6 +32,7 @@ export function localApiPlugin(): Plugin {
   return {
     name: 'dialago-local-api',
     configureServer(server) {
+      applyLocalEnv(server.config.mode, server.config.root);
       server.middlewares.use(async (req, res, next) => {
         if (!req.url?.startsWith('/api/')) {
           next();
@@ -51,9 +70,21 @@ export function localApiPlugin(): Plugin {
               return;
             }
             const text = await transcribeWithGroq(audio, mimeType);
+            const extractProfile = body.extractProfile !== false;
+            const intro =
+              extractProfile && text
+                ? await extractIntroWithGroq(text)
+                : { name: '', profession: '' };
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ text }));
+            res.end(
+              JSON.stringify({
+                text,
+                name: intro.name,
+                profession: intro.profession,
+                demo: useDemoMode(),
+              }),
+            );
             return;
           }
 
@@ -69,6 +100,21 @@ export function localApiPlugin(): Plugin {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ reply }));
+            return;
+          }
+
+          if (path === '/api/extract-intro') {
+            const transcript = typeof body.transcript === 'string' ? body.transcript.trim() : '';
+            if (!transcript) {
+              res.statusCode = 400;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: 'transcript is required' }));
+              return;
+            }
+            const result = await extractIntroWithGroq(transcript);
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ ...result, demo: !process.env.GROQ_API_KEY }));
             return;
           }
 

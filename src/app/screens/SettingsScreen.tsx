@@ -1,7 +1,9 @@
 import React from 'react';
 import { t } from '../../i18n';
 import { useApp } from '../AppContext';
+import { EditProfileSection } from '../components/EditProfileSection';
 import { ProfileDashboard } from '../components/ProfileDashboard';
+import { APP_BUILD } from '../buildVersion';
 
 export function SettingsScreen() {
   const { lang, setLang, savedPhraseIds, resetApp } = useApp();
@@ -36,11 +38,13 @@ export function SettingsScreen() {
         <button type="button" className="dialago-btn dialago-btn--ghost dialago-settings__reset" onClick={resetApp}>
           {t(lang, 'app.settings.reset')}
         </button>
+        <EditProfileSection />
       </div>
 
       <section className="dialago-settings__summary">
         <h2 className="dialago-screen--pad-h dialago-settings__summaryTitle">{t(lang, 'app.settings.progressSummary')}</h2>
         <ProfileDashboard animate={false} />
+        <p className="dialago-screen--pad-h dialago-settings__build muted">Build {APP_BUILD}</p>
       </section>
     </div>
   );

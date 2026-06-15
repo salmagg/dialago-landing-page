@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import type { AppTab } from './types';
 import { AppProvider, useApp } from './AppContext';
 import { AppShell } from './components/AppShell';
 import { ProfileDashboard } from './components/ProfileDashboard';
@@ -38,32 +39,29 @@ function MobileAppRoutes() {
     );
   }
 
-  let content: React.ReactNode;
-  switch (tab) {
-    case 'home':
-      content = <HomeScreen />;
-      break;
-    case 'learn':
-      content = <PhraseScreen />;
-      break;
-    case 'practice':
-      content = <PracticeScreen />;
-      break;
-    case 'progress':
-      content = (
+  const tabClass = (id: AppTab) => `dialago-tab-panel ${tab === id ? 'is-active' : ''}`;
+
+  return (
+    <AppShell>
+      <div className={tabClass('home')}>
+        <HomeScreen />
+      </div>
+      <div className={tabClass('learn')}>
+        <PhraseScreen />
+      </div>
+      <div className={tabClass('practice')}>
+        <PracticeScreen />
+      </div>
+      <div className={tabClass('progress')}>
         <div className="dialago-screen dialago-screen--scroll dialago-screen--pad-h">
           <ProfileDashboard />
         </div>
-      );
-      break;
-    case 'profile':
-      content = <SettingsScreen />;
-      break;
-    default:
-      content = <HomeScreen />;
-  }
-
-  return <AppShell>{content}</AppShell>;
+      </div>
+      <div className={tabClass('profile')}>
+        <SettingsScreen />
+      </div>
+    </AppShell>
+  );
 }
 
 export function MobileApp() {

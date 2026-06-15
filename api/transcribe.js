@@ -21,7 +21,15 @@ module.exports = async function handler(req, res) {
     }
 
     const text = await transcribeWithGroq(audio, mimeType);
-    return sendJson(res, 200, { text });
+    const { extractIntroWithGroq, useDemoMode } = require('./_lib/groq');
+    const extractProfile = body.extractProfile !== false;
+    const intro = extractProfile && text ? await extractIntroWithGroq(text) : { name: '', profession: '' };
+    return sendJson(res, 200, {
+      text,
+      name: intro.name,
+      profession: intro.profession,
+      demo: useDemoMode(),
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Transcription error';
     console.error('[transcribe]', message);

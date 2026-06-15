@@ -27,13 +27,26 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
   return data;
 }
 
-export async function transcribeAudio(blob: Blob): Promise<string> {
+export type TranscribeResult = {
+  text: string;
+  name?: string;
+  profession?: string;
+  demo?: boolean;
+};
+
+export async function transcribeAudio(blob: Blob): Promise<TranscribeResult> {
   const base64 = await blobToBase64(blob);
-  const data = await postJson<{ text: string }>('/api/transcribe', {
+  const data = await postJson<TranscribeResult>('/api/transcribe', {
     audio: base64,
     mimeType: blob.type || 'audio/webm',
+    extractProfile: true,
   });
-  return data.text.trim();
+  return {
+    text: data.text.trim(),
+    name: data.name?.trim() ?? '',
+    profession: data.profession?.trim() ?? '',
+    demo: data.demo,
+  };
 }
 
 export async function sendTutorChat(messages: ApiChatMessage[]): Promise<string> {

@@ -9,7 +9,7 @@ export function generateDecksForProfile(profile: AppProfile): FlashcardDeck[] {
   const category = scenarioCategory(profile.profession);
   const scenarioKeys = SCENARIO_KEYS[category] ?? SCENARIO_KEYS.default;
 
-  return scenarioKeys.map((scenarioKey) => {
+  const decks = scenarioKeys.map((scenarioKey) => {
     const slug = scenarioSlugFromKey(scenarioKey);
     const meta = getScenarioMeta(slug);
     const cards = buildCardsForScenario(category, scenarioKey);
@@ -21,11 +21,24 @@ export function generateDecksForProfile(profile: AppProfile): FlashcardDeck[] {
       scenarioKey: meta.scenarioKey,
       scenarioLabelKey: meta.scenarioLabelKey,
       professionCategory: category,
-      professionLabelKey: getProfessionLabelKey(category),
-      practiceScenarioId: meta.practiceScenarioId,
+      professionLabelKey: meta.professionLabelKey ?? getProfessionLabelKey(category),
+      practiceScenarioId: slug,
       personalized: true,
       cards,
     };
+  });
+
+  return sortDecksFixed(decks);
+}
+
+const FIXED_SCENARIO_ORDER = ['hos1', 'hos2', 'hos3', 'hos4'] as const;
+
+function sortDecksFixed(decks: FlashcardDeck[]): FlashcardDeck[] {
+  return [...decks].sort((a, b) => {
+    const aSlug = a.id.split('-').pop() ?? '';
+    const bSlug = b.id.split('-').pop() ?? '';
+    return FIXED_SCENARIO_ORDER.indexOf(aSlug as (typeof FIXED_SCENARIO_ORDER)[number]) -
+      FIXED_SCENARIO_ORDER.indexOf(bSlug as (typeof FIXED_SCENARIO_ORDER)[number]);
   });
 }
 

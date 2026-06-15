@@ -29,7 +29,7 @@ export function useVoiceTutorSession() {
 
       try {
         setPhase('transcribing');
-        const transcript = await transcribeAudio(blob);
+        const { text: transcript } = await transcribeAudio(blob);
         if (!transcript) {
           throw new Error('No speech detected. Try again.');
         }
